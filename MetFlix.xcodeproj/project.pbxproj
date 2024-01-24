@@ -1,0 +1,612 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		664F3CB92B6118DC009C5E3B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CB82B6118DC009C5E3B /* AppDelegate.swift */; };
+		664F3CBB2B6118DC009C5E3B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CBA2B6118DC009C5E3B /* SceneDelegate.swift */; };
+		664F3CBD2B6118DC009C5E3B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CBC2B6118DC009C5E3B /* ViewController.swift */; };
+		664F3CC02B6118DC009C5E3B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 664F3CBE2B6118DC009C5E3B /* Main.storyboard */; };
+		664F3CC22B6118DD009C5E3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 664F3CC12B6118DD009C5E3B /* Assets.xcassets */; };
+		664F3CC52B6118DD009C5E3B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 664F3CC32B6118DD009C5E3B /* LaunchScreen.storyboard */; };
+		664F3CD02B6118DD009C5E3B /* MetFlixTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CCF2B6118DD009C5E3B /* MetFlixTests.swift */; };
+		664F3CDA2B6118DD009C5E3B /* MetFlixUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CD92B6118DD009C5E3B /* MetFlixUITests.swift */; };
+		664F3CDC2B6118DD009C5E3B /* MetFlixUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CDB2B6118DD009C5E3B /* MetFlixUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		664F3CCC2B6118DD009C5E3B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 664F3CAD2B6118DB009C5E3B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 664F3CB42B6118DC009C5E3B;
+			remoteInfo = MetFlix;
+		};
+		664F3CD62B6118DD009C5E3B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 664F3CAD2B6118DB009C5E3B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 664F3CB42B6118DC009C5E3B;
+			remoteInfo = MetFlix;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		664F3CB52B6118DC009C5E3B /* MetFlix.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetFlix.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		664F3CB82B6118DC009C5E3B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		664F3CBA2B6118DC009C5E3B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		664F3CBC2B6118DC009C5E3B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		664F3CBF2B6118DC009C5E3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		664F3CC12B6118DD009C5E3B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		664F3CC42B6118DD009C5E3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		664F3CC62B6118DD009C5E3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		664F3CCB2B6118DD009C5E3B /* MetFlixTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetFlixTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		664F3CCF2B6118DD009C5E3B /* MetFlixTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetFlixTests.swift; sourceTree = "<group>"; };
+		664F3CD52B6118DD009C5E3B /* MetFlixUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetFlixUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		664F3CD92B6118DD009C5E3B /* MetFlixUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetFlixUITests.swift; sourceTree = "<group>"; };
+		664F3CDB2B6118DD009C5E3B /* MetFlixUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetFlixUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		664F3CB22B6118DC009C5E3B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		664F3CC82B6118DD009C5E3B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		664F3CD22B6118DD009C5E3B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		664F3CAC2B6118DB009C5E3B = {
+			isa = PBXGroup;
+			children = (
+				664F3CB72B6118DC009C5E3B /* MetFlix */,
+				664F3CCE2B6118DD009C5E3B /* MetFlixTests */,
+				664F3CD82B6118DD009C5E3B /* MetFlixUITests */,
+				664F3CB62B6118DC009C5E3B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		664F3CB62B6118DC009C5E3B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				664F3CB52B6118DC009C5E3B /* MetFlix.app */,
+				664F3CCB2B6118DD009C5E3B /* MetFlixTests.xctest */,
+				664F3CD52B6118DD009C5E3B /* MetFlixUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		664F3CB72B6118DC009C5E3B /* MetFlix */ = {
+			isa = PBXGroup;
+			children = (
+				664F3CB82B6118DC009C5E3B /* AppDelegate.swift */,
+				664F3CBA2B6118DC009C5E3B /* SceneDelegate.swift */,
+				664F3CBC2B6118DC009C5E3B /* ViewController.swift */,
+				664F3CBE2B6118DC009C5E3B /* Main.storyboard */,
+				664F3CC12B6118DD009C5E3B /* Assets.xcassets */,
+				664F3CC32B6118DD009C5E3B /* LaunchScreen.storyboard */,
+				664F3CC62B6118DD009C5E3B /* Info.plist */,
+			);
+			path = MetFlix;
+			sourceTree = "<group>";
+		};
+		664F3CCE2B6118DD009C5E3B /* MetFlixTests */ = {
+			isa = PBXGroup;
+			children = (
+				664F3CCF2B6118DD009C5E3B /* MetFlixTests.swift */,
+			);
+			path = MetFlixTests;
+			sourceTree = "<group>";
+		};
+		664F3CD82B6118DD009C5E3B /* MetFlixUITests */ = {
+			isa = PBXGroup;
+			children = (
+				664F3CD92B6118DD009C5E3B /* MetFlixUITests.swift */,
+				664F3CDB2B6118DD009C5E3B /* MetFlixUITestsLaunchTests.swift */,
+			);
+			path = MetFlixUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		664F3CB42B6118DC009C5E3B /* MetFlix */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 664F3CDF2B6118DD009C5E3B /* Build configuration list for PBXNativeTarget "MetFlix" */;
+			buildPhases = (
+				664F3CB12B6118DC009C5E3B /* Sources */,
+				664F3CB22B6118DC009C5E3B /* Frameworks */,
+				664F3CB32B6118DC009C5E3B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MetFlix;
+			productName = MetFlix;
+			productReference = 664F3CB52B6118DC009C5E3B /* MetFlix.app */;
+			productType = "com.apple.product-type.application";
+		};
+		664F3CCA2B6118DD009C5E3B /* MetFlixTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 664F3CE22B6118DD009C5E3B /* Build configuration list for PBXNativeTarget "MetFlixTests" */;
+			buildPhases = (
+				664F3CC72B6118DD009C5E3B /* Sources */,
+				664F3CC82B6118DD009C5E3B /* Frameworks */,
+				664F3CC92B6118DD009C5E3B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				664F3CCD2B6118DD009C5E3B /* PBXTargetDependency */,
+			);
+			name = MetFlixTests;
+			productName = MetFlixTests;
+			productReference = 664F3CCB2B6118DD009C5E3B /* MetFlixTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		664F3CD42B6118DD009C5E3B /* MetFlixUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 664F3CE52B6118DD009C5E3B /* Build configuration list for PBXNativeTarget "MetFlixUITests" */;
+			buildPhases = (
+				664F3CD12B6118DD009C5E3B /* Sources */,
+				664F3CD22B6118DD009C5E3B /* Frameworks */,
+				664F3CD32B6118DD009C5E3B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				664F3CD72B6118DD009C5E3B /* PBXTargetDependency */,
+			);
+			name = MetFlixUITests;
+			productName = MetFlixUITests;
+			productReference = 664F3CD52B6118DD009C5E3B /* MetFlixUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		664F3CAD2B6118DB009C5E3B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1520;
+				LastUpgradeCheck = 1520;
+				TargetAttributes = {
+					664F3CB42B6118DC009C5E3B = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					664F3CCA2B6118DD009C5E3B = {
+						CreatedOnToolsVersion = 15.2;
+						TestTargetID = 664F3CB42B6118DC009C5E3B;
+					};
+					664F3CD42B6118DD009C5E3B = {
+						CreatedOnToolsVersion = 15.2;
+						TestTargetID = 664F3CB42B6118DC009C5E3B;
+					};
+				};
+			};
+			buildConfigurationList = 664F3CB02B6118DB009C5E3B /* Build configuration list for PBXProject "MetFlix" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 664F3CAC2B6118DB009C5E3B;
+			productRefGroup = 664F3CB62B6118DC009C5E3B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				664F3CB42B6118DC009C5E3B /* MetFlix */,
+				664F3CCA2B6118DD009C5E3B /* MetFlixTests */,
+				664F3CD42B6118DD009C5E3B /* MetFlixUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		664F3CB32B6118DC009C5E3B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				664F3CC52B6118DD009C5E3B /* LaunchScreen.storyboard in Resources */,
+				664F3CC22B6118DD009C5E3B /* Assets.xcassets in Resources */,
+				664F3CC02B6118DC009C5E3B /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		664F3CC92B6118DD009C5E3B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		664F3CD32B6118DD009C5E3B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		664F3CB12B6118DC009C5E3B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				664F3CBD2B6118DC009C5E3B /* ViewController.swift in Sources */,
+				664F3CB92B6118DC009C5E3B /* AppDelegate.swift in Sources */,
+				664F3CBB2B6118DC009C5E3B /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		664F3CC72B6118DD009C5E3B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				664F3CD02B6118DD009C5E3B /* MetFlixTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		664F3CD12B6118DD009C5E3B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				664F3CDC2B6118DD009C5E3B /* MetFlixUITestsLaunchTests.swift in Sources */,
+				664F3CDA2B6118DD009C5E3B /* MetFlixUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		664F3CCD2B6118DD009C5E3B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 664F3CB42B6118DC009C5E3B /* MetFlix */;
+			targetProxy = 664F3CCC2B6118DD009C5E3B /* PBXContainerItemProxy */;
+		};
+		664F3CD72B6118DD009C5E3B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 664F3CB42B6118DC009C5E3B /* MetFlix */;
+			targetProxy = 664F3CD62B6118DD009C5E3B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		664F3CBE2B6118DC009C5E3B /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				664F3CBF2B6118DC009C5E3B /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		664F3CC32B6118DD009C5E3B /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				664F3CC42B6118DD009C5E3B /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		664F3CDD2B6118DD009C5E3B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		664F3CDE2B6118DD009C5E3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		664F3CE02B6118DD009C5E3B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UZH69S3QN2;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MetFlix/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MetFlix;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		664F3CE12B6118DD009C5E3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UZH69S3QN2;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MetFlix/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MetFlix;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		664F3CE32B6118DD009C5E3B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UZH69S3QN2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MetFlixTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MetFlix.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MetFlix";
+			};
+			name = Debug;
+		};
+		664F3CE42B6118DD009C5E3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UZH69S3QN2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MetFlixTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MetFlix.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MetFlix";
+			};
+			name = Release;
+		};
+		664F3CE62B6118DD009C5E3B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UZH69S3QN2;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MetFlixUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = MetFlix;
+			};
+			name = Debug;
+		};
+		664F3CE72B6118DD009C5E3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UZH69S3QN2;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MetFlixUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = MetFlix;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		664F3CB02B6118DB009C5E3B /* Build configuration list for PBXProject "MetFlix" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				664F3CDD2B6118DD009C5E3B /* Debug */,
+				664F3CDE2B6118DD009C5E3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		664F3CDF2B6118DD009C5E3B /* Build configuration list for PBXNativeTarget "MetFlix" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				664F3CE02B6118DD009C5E3B /* Debug */,
+				664F3CE12B6118DD009C5E3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		664F3CE22B6118DD009C5E3B /* Build configuration list for PBXNativeTarget "MetFlixTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				664F3CE32B6118DD009C5E3B /* Debug */,
+				664F3CE42B6118DD009C5E3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		664F3CE52B6118DD009C5E3B /* Build configuration list for PBXNativeTarget "MetFlixUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				664F3CE62B6118DD009C5E3B /* Debug */,
+				664F3CE72B6118DD009C5E3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 664F3CAD2B6118DB009C5E3B /* Project object */;
+}
