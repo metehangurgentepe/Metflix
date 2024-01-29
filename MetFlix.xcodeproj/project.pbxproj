@@ -10,7 +10,6 @@
 		664F3CB92B6118DC009C5E3B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CB82B6118DC009C5E3B /* AppDelegate.swift */; };
 		664F3CBB2B6118DC009C5E3B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CBA2B6118DC009C5E3B /* SceneDelegate.swift */; };
 		664F3CBD2B6118DC009C5E3B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CBC2B6118DC009C5E3B /* ViewController.swift */; };
-		664F3CC02B6118DC009C5E3B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 664F3CBE2B6118DC009C5E3B /* Main.storyboard */; };
 		664F3CC22B6118DD009C5E3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 664F3CC12B6118DD009C5E3B /* Assets.xcassets */; };
 		664F3CC52B6118DD009C5E3B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 664F3CC32B6118DD009C5E3B /* LaunchScreen.storyboard */; };
 		664F3CD02B6118DD009C5E3B /* MetFlixTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CCF2B6118DD009C5E3B /* MetFlixTests.swift */; };
@@ -40,7 +39,6 @@
 		664F3CB82B6118DC009C5E3B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		664F3CBA2B6118DC009C5E3B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		664F3CBC2B6118DC009C5E3B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		664F3CBF2B6118DC009C5E3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		664F3CC12B6118DD009C5E3B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		664F3CC42B6118DD009C5E3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		664F3CC62B6118DD009C5E3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -99,10 +97,12 @@
 		664F3CB72B6118DC009C5E3B /* MetFlix */ = {
 			isa = PBXGroup;
 			children = (
-				664F3CB82B6118DC009C5E3B /* AppDelegate.swift */,
-				664F3CBA2B6118DC009C5E3B /* SceneDelegate.swift */,
-				664F3CBC2B6118DC009C5E3B /* ViewController.swift */,
-				664F3CBE2B6118DC009C5E3B /* Main.storyboard */,
+				664F3CED2B61196E009C5E3B /* Enums */,
+				664F3CEC2B611969009C5E3B /* Model */,
+				664F3CEB2B611961009C5E3B /* Extensions */,
+				664F3CEA2B61195A009C5E3B /* Utils */,
+				664F3CE92B61191F009C5E3B /* App */,
+				664F3CE82B611911009C5E3B /* Features */,
 				664F3CC12B6118DD009C5E3B /* Assets.xcassets */,
 				664F3CC32B6118DD009C5E3B /* LaunchScreen.storyboard */,
 				664F3CC62B6118DD009C5E3B /* Info.plist */,
@@ -125,6 +125,51 @@
 				664F3CDB2B6118DD009C5E3B /* MetFlixUITestsLaunchTests.swift */,
 			);
 			path = MetFlixUITests;
+			sourceTree = "<group>";
+		};
+		664F3CE82B611911009C5E3B /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				664F3CBC2B6118DC009C5E3B /* ViewController.swift */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		664F3CE92B61191F009C5E3B /* App */ = {
+			isa = PBXGroup;
+			children = (
+				664F3CB82B6118DC009C5E3B /* AppDelegate.swift */,
+				664F3CBA2B6118DC009C5E3B /* SceneDelegate.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		664F3CEA2B61195A009C5E3B /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		664F3CEB2B611961009C5E3B /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		664F3CEC2B611969009C5E3B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		664F3CED2B61196E009C5E3B /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Enums;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -233,7 +278,6 @@
 			files = (
 				664F3CC52B6118DD009C5E3B /* LaunchScreen.storyboard in Resources */,
 				664F3CC22B6118DD009C5E3B /* Assets.xcassets in Resources */,
-				664F3CC02B6118DC009C5E3B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,14 +341,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		664F3CBE2B6118DC009C5E3B /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				664F3CBF2B6118DC009C5E3B /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		664F3CC32B6118DD009C5E3B /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
