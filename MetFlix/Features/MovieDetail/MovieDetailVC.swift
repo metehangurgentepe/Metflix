@@ -12,7 +12,7 @@ protocol MovieDetailVCDelegate: AnyObject {
     func didTapInfoButton()
 }
 
-class MovieDetailVC: UIViewController, UIScrollViewDelegate {
+class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
     
     let imageView: UIImageView = {
         let imageView = UIImageView()
@@ -23,13 +23,19 @@ class MovieDetailVC: UIViewController, UIScrollViewDelegate {
     let movieInfoView = MovieInfoView()
     let starRatingView = StarRatingView()
     let favButton = UIBarButtonItem()
-    let playButton = UIButton()
     let overviewLabel: UILabel = {
         let label = UILabel()
         label.textColor = .label
         label.font = .preferredFont(forTextStyle: .subheadline)
-        label.numberOfLines = 5
+        label.numberOfLines = 14
         return label
+    }()
+    
+    let playButton: UIButton = {
+        let button = UIButton()
+        let image = UIImage(named: "playButton")
+        button.setImage(image, for: .normal)
+        return button
     }()
     
     let scrollView = UIScrollView()
@@ -44,20 +50,15 @@ class MovieDetailVC: UIViewController, UIScrollViewDelegate {
         return collectionView
     }()
     
-    lazy var similarMovieHeader: CollectionViewHeaderStack = {
-        let action = UIAction { [weak self] action in
-            guard let self = self else { return }
-            let destVC = SeeAllVC(endpoint: .nowPlaying, type: "Similar Movies")
-            self.navigationController?.pushViewController(destVC, animated: true)
-        }
-        return CollectionViewHeaderStack(title: "Similar Movies", action: action)
-    }()
+    let similarMovieHeader = Header(title: "Similar Movies", action: UIAction(handler: { action in
+        
+    }))
     
-    var movieInfoButtons = MovieButtonsView()
+    let infoButton = UIBarButtonItem()
+    
     var movieId: Int!
     var movie: Movie?
-    var similarMovies: MovieListResponse?
-    weak var delegate: MovieDetailVCDelegate!
+    var similarMovies: MovieResponse?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,13 +67,12 @@ class MovieDetailVC: UIViewController, UIScrollViewDelegate {
         configureImageView()
         configureMovieInfoView()
         configureStarRatingView()
-        configureMovieDetailButton()
         configureOverviewLabel()
         configureHeader()
         configureCollectionView()
-        
-        movieInfoButtons.delegate = self
-        
+        configurePlayButton()
+        configureInfoButton()
+                
         Task {
             try await getMovieDetail()
             try await getSimilarMovies()
@@ -92,7 +92,7 @@ class MovieDetailVC: UIViewController, UIScrollViewDelegate {
     
     private func configureViewController() {
         view.backgroundColor = .systemBackground
-        navigationItem.rightBarButtonItem = favButton
+        navigationItem.rightBarButtonItems = [favButton, infoButton]
     }
     
     
@@ -101,9 +101,20 @@ class MovieDetailVC: UIViewController, UIScrollViewDelegate {
         
         similarMovieHeader.snp.makeConstraints { make in
             make.top.equalTo(overviewLabel.snp.bottom).offset(20)
-            make.leading.equalToSuperview().offset(20)
-            make.trailing.equalToSuperview().offset(-20)
+            make.leading.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-10)
             make.height.equalTo(25)
+        }
+    }
+    
+    func configurePlayButton() {
+        playButton.addTarget(self, action: #selector(didTapPlayButton), for: .touchUpInside)
+        
+        view.addSubview(playButton)
+        
+        playButton.snp.makeConstraints { make in
+            make.centerX.equalTo(imageView.snp.centerX)
+            make.centerY.equalTo(imageView.snp.centerY)
         }
     }
     
@@ -137,7 +148,7 @@ class MovieDetailVC: UIViewController, UIScrollViewDelegate {
         }
         
         contentView.snp.makeConstraints { make in
-            make.height.equalTo(1100)
+            make.height.equalTo(1000)
             make.width.equalTo(scrollView.snp.width)
             make.top.equalTo(scrollView.snp.top).offset(0)
             make.bottom.equalTo(scrollView.snp.bottom)
@@ -146,40 +157,49 @@ class MovieDetailVC: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    func configureMovieDetailButton() {
-        contentView.addSubview(movieInfoButtons)
-        
-        movieInfoButtons.snp.makeConstraints { make in
-            make.top.equalTo(starRatingView.snp.bottom).offset(30)
-            make.centerX.equalToSuperview()
-            make.height.equalTo(100)
-        }
-    }
-    
     
     func configureOverviewLabel() {
         contentView.addSubview(overviewLabel)
         
         overviewLabel.snp.makeConstraints { make in
-            make.top.equalTo(movieInfoButtons.snp.bottom).offset(20)
+            make.top.equalTo(starRatingView.snp.bottom).offset(20)
             make.leading.equalToSuperview().offset(20)
             make.trailing.equalToSuperview().offset(-20)
         }
     }
     
-    func configureBarButtonItem() {
+    
+    func configureInfoButton() {
+        infoButton.image = UIImage(named: "info.circle")
+        infoButton.target = self
+        infoButton.action = #selector(infoButtonTapped)
+    }
+    
+    
+    @objc func infoButtonTapped() {
+        if let movie = movie {
+            if let url = URL(string:movie.homepage ?? "") {
+                presentSafariVC(with: url)
+            }
+            else {
+                presentAlertOnMainThread(title: "Error", message: "Error Alert", buttonTitle: "Ok")
+            }
+        }
+    }
+    
+    
+    func configureFavButtonItem() {
         if let movie = movie {
             PersistenceManager.isSaved(favorite: movie) { [weak self] result in
                 guard let self = self else { return }
+                self.favButton.target = self
                 switch result {
                 case .success(let isSaved):
                     if isSaved {
-                        self.favButton.image = UIImage(systemName: "heart.fill")
-                        self.favButton.target = self
+                        self.favButton.image = UIImage(named: "heart.fill")
                         self.favButton.action = #selector(removeFavMovie)
                     } else {
-                        self.favButton.image = UIImage(systemName: "heart")
-                        self.favButton.target = self
+                        self.favButton.image = UIImage(named: "heart")
                         self.favButton.action = #selector(addFavMovie)
                     }
                 case .failure(let error):
@@ -191,13 +211,19 @@ class MovieDetailVC: UIViewController, UIScrollViewDelegate {
     
     
     func configureImageView() {
+        let width = view.frame.width
+        
+        let imageWidth = 780 / width
+        
+        let imageHeight = 438 / imageWidth
+        
         contentView.addSubview(imageView)
         
         imageView.snp.makeConstraints { make in
             make.top.equalTo(contentView.snp.topMargin)
             make.trailing.equalToSuperview()
             make.leading.equalToSuperview()
-            make.height.equalTo(300)
+            make.height.equalTo(imageHeight)
         }
     }
     
@@ -246,7 +272,7 @@ class MovieDetailVC: UIViewController, UIScrollViewDelegate {
             if let error = error {
                 self.presentAlertOnMainThread(title: "Error", message: error.rawValue, buttonTitle: "Ok")
             } else {
-                configureBarButtonItem()
+                configureFavButtonItem()
             }
         }
     }
@@ -258,14 +284,9 @@ class MovieDetailVC: UIViewController, UIScrollViewDelegate {
             if let error = error {
                 self.presentAlertOnMainThread(title: "Error", message: error.rawValue, buttonTitle: "Ok")
             } else {
-                configureBarButtonItem()
+                configureFavButtonItem()
             }
         }
-    }
-    
-    
-    func configureUIElements(with movie: Movie) {
-//        self.add(childVC: MovieDetailButtons(movie: movie, delegate: self), to: self.movieInfoButtons)
     }
     
     
@@ -277,12 +298,8 @@ class MovieDetailVC: UIViewController, UIScrollViewDelegate {
     }
     
     
-    @objc func tapPlayButton() {
-        print("play")
-    }
-    
-    
     func getMovieDetail() async throws {
+        showLoadingView()
         Task{
             do{
                 self.movie = try await MovieStore.shared.fetchMovieDetail(id: movieId)
@@ -291,13 +308,8 @@ class MovieDetailVC: UIViewController, UIScrollViewDelegate {
                 starRatingView.rating = movie!.voteAverage
                 title = movie!.title
                 overviewLabel.text = movie!.overview
-                DispatchQueue.main.async{ [weak self] in
-                    guard let self = self else { return }
-//                    self.configureUIElements(with: self.movie!)
-                    configureBarButtonItem()
-                    movieInfoButtons.movie = self.movie
-                }
-               
+                configureFavButtonItem()
+                dismissLoadingView()
             } catch {
                 presentAlertOnMainThread(title: "Error", message: error.localizedDescription, buttonTitle: "Ok")
             }
@@ -308,6 +320,15 @@ class MovieDetailVC: UIViewController, UIScrollViewDelegate {
         Task {
             self.similarMovies = try await MovieStore.shared.getSimilarMovies(id: movieId)
             collectionView.reloadData()
+        }
+    }
+    
+    @objc func didTapPlayButton() {
+        Task{
+            let video = try await MovieStore.shared.fetchMovieVideo(id: movieId).results
+            let videoURLKey = video[0].key
+            let url = URL(string:"https://youtube.com/watch?v=\(videoURLKey)")
+            presentSafariVC(with: url!)
         }
     }
 }
@@ -335,57 +356,16 @@ extension MovieDetailVC: UICollectionViewDataSource, UICollectionViewDelegate {
 
 extension MovieDetailVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        switch collectionView {
-        case collectionView:
-            return CGSize(width: 235, height: 350)
-        default:
-            return CGSize(width: 150, height: 100)
-        }
+        return CGSize(width: 235, height: 350)
     }
     
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        switch collectionView {
-        case collectionView:
-            return 30
-        default:
-            return 4
-        }
+        return 20
     }
     
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        switch collectionView {
-        case collectionView:
-            return 20
-        default:
-            return 4
-        }
-    }
-}
-
-
-extension MovieDetailVC: MovieDetailVCDelegate {
-    func didTapInfoButton() {
-        print("info2222")
-    }
-    
-    func didTapInfoButton(for movie: Movie) {
-        print("info")
-    }
-    
-    
-    func didTapPlayButton(for movie: Movie) {
-        print("play")
-        presentAlertOnMainThread(title: "ok", message: "ok", buttonTitle: "ok")
-    }
-    
-    
-    func didTapAddListButton(for movie: Movie) {
-        print("tap")
-    }
-    
-    func didTapButton() {
-        print("tapped button")
+        return 20
     }
 }

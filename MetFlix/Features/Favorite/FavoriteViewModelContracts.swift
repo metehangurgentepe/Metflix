@@ -6,3 +6,23 @@
 //
 
 import Foundation
+
+protocol FavoriteViewModelProtocol {
+    var delegate: FavoriteViewModelDelegate? { get set }
+    func load()
+    func filter(_ genreName: String)
+}
+
+enum FavoriteViewModelOutput{
+    case favoriteList([Movie])
+    case error(Error)
+    case selectMovie(Int)
+    case filter(String)
+}
+
+protocol FavoriteViewModelDelegate: AnyObject {
+    func handleOutput(_ output: FavoriteViewModelOutput)
+}
+
+
+

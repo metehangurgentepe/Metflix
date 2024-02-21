@@ -6,3 +6,14 @@
 //
 
 import Foundation
+
+struct MovieVideoModel: Codable {
+    var id: Int
+    var results: [VideoResult]
+}
+
+struct VideoResult: Codable {
+    var name: String
+    var key: String
+    var site: String
+}

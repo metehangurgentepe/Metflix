@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct Genre {
+    let name: String
+    
+    static let allCases = ["Comedy", "Family", "Action", "Drama", "Fantasy", "Science Fiction"]
+}
