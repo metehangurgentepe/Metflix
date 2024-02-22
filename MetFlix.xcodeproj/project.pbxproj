@@ -35,6 +35,7 @@
 		664F3CD02B6118DD009C5E3B /* MetFlixTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CCF2B6118DD009C5E3B /* MetFlixTests.swift */; };
 		664F3CDA2B6118DD009C5E3B /* MetFlixUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CD92B6118DD009C5E3B /* MetFlixUITests.swift */; };
 		664F3CDC2B6118DD009C5E3B /* MetFlixUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CDB2B6118DD009C5E3B /* MetFlixUITestsLaunchTests.swift */; };
+		665505D12B872F3200391A12 /* MovieDetailViewModelContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665505D02B872F3200391A12 /* MovieDetailViewModelContracts.swift */; };
 		666560382B80A23900EC0730 /* Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666560372B80A23900EC0730 /* Header.swift */; };
 		6665603A2B80AD3500EC0730 /* CarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666560392B80AD3500EC0730 /* CarouselView.swift */; };
 		6665603C2B80BA6300EC0730 /* UICollectionViewFlowLayout + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6665603B2B80BA6300EC0730 /* UICollectionViewFlowLayout + Ext.swift */; };
@@ -120,6 +121,7 @@
 		664F3CD52B6118DD009C5E3B /* MetFlixUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetFlixUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		664F3CD92B6118DD009C5E3B /* MetFlixUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetFlixUITests.swift; sourceTree = "<group>"; };
 		664F3CDB2B6118DD009C5E3B /* MetFlixUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetFlixUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		665505D02B872F3200391A12 /* MovieDetailViewModelContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailViewModelContracts.swift; sourceTree = "<group>"; };
 		666560372B80A23900EC0730 /* Header.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Header.swift; sourceTree = "<group>"; };
 		666560392B80AD3500EC0730 /* CarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselView.swift; sourceTree = "<group>"; };
 		6665603B2B80BA6300EC0730 /* UICollectionViewFlowLayout + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionViewFlowLayout + Ext.swift"; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 			children = (
 				66C006AD2B63BF500056830B /* MovieDetailViewModel.swift */,
 				66C006932B63A99E0056830B /* MovieDetailVC.swift */,
+				665505D02B872F3200391A12 /* MovieDetailViewModelContracts.swift */,
 			);
 			path = MovieDetail;
 			sourceTree = "<group>";
@@ -640,6 +643,7 @@
 				662EED8F2B778A2100470192 /* CustomButton.swift in Sources */,
 				66C006982B63A9E70056830B /* FavoriteViewController.swift in Sources */,
 				66C3EFAF2B7629D2005F57B7 /* UIView+Ext.swift in Sources */,
+				665505D12B872F3200391A12 /* MovieDetailViewModelContracts.swift in Sources */,
 				66C3EFA32B74F434005F57B7 /* UIImage+Ext.swift in Sources */,
 				66B66CDB2B7B5D12000849A0 /* SeeAllCell.swift in Sources */,
 				66C40B902B665CAC00540494 /* Utils.swift in Sources */,

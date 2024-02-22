@@ -20,12 +20,14 @@ class SeeAllVC: DataLoadingVC {
     var movieType: String!
     var page: Int = 1
     var viewModel: SeeAllViewModel?
+    var id: Int?
     
-    init(endpoint: MovieListEndpoint, type: String) {
+    init(endpoint: MovieListEndpoint, type: String, id: Int? = nil) {
         super.init(nibName: nil, bundle: nil)
         self.movieEndpoint = endpoint
         self.movieType = type
-        self.viewModel = SeeAllViewModel(endpoint: endpoint, page: page)
+        self.id = id
+        self.viewModel = SeeAllViewModel(endpoint: endpoint, page: page,id: id)
     }
     
     

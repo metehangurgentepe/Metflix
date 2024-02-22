@@ -27,11 +27,19 @@ class MovieStore: MovieService {
         return try await self.loadURLAndDecode(url: url, page: 1)
     }
 
-    func fetchMoviesList(from endpoint: MovieListEndpoint, page: Int) async throws -> MovieResponse {
-        guard let url = URL(string: "\(baseAPIURL)/movie/\(endpoint.rawValue)?language=en-US") else {
-            throw MovieError.invalidEndpoint
+    func fetchMoviesList(from endpoint: MovieListEndpoint, page: Int, id: Int?) async throws -> MovieResponse {
+        if endpoint.rawValue == "similar" && id != nil{
+            guard let url = URL(string: "\(baseAPIURL)/movie/\(id!)/\(endpoint.rawValue)?language=en-US") else {
+                throw MovieError.invalidEndpoint
+            }
+            return try await self.loadURLAndDecode(url: url, page: page)
+            
+        } else {
+            guard let url = URL(string: "\(baseAPIURL)/movie/\(endpoint.rawValue)?language=en-US") else {
+                throw MovieError.invalidEndpoint
+            }
+            return try await self.loadURLAndDecode(url: url, page: page)
         }
-        return try await self.loadURLAndDecode(url: url, page: page)
     }
     
     func fetchMovieDetail(id: Int) async throws -> Movie {

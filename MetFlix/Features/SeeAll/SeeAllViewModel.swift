@@ -13,10 +13,12 @@ class SeeAllViewModel: SeeAllViewModelProtocol {
     var endpoint: MovieListEndpoint?
     var page: Int = 1
     var movies: [Movie] =  []
+    var id: Int?
     
-    init(endpoint: MovieListEndpoint, page: Int) {
+    init(endpoint: MovieListEndpoint, page: Int, id: Int? = nil) {
         self.endpoint = endpoint
         self.page = page
+        self.id = id
     }
     
     
@@ -25,7 +27,7 @@ class SeeAllViewModel: SeeAllViewModelProtocol {
         Task { [weak self] in
             guard let self = self else { return }
 
-            let newMovies = try await MovieStore.shared.fetchMoviesList(from: endpoint ?? .nowPlaying, page: page).results
+            let newMovies = try await MovieStore.shared.fetchMoviesList(from: endpoint ?? .nowPlaying, page: page, id: id).results
             self.movies.append(contentsOf: newMovies)
 
             self.delegate?.handleOutput(.movieList(self.movies))

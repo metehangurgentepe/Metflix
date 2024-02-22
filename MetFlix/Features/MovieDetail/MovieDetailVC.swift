@@ -8,10 +8,6 @@
 import Foundation
 import UIKit
 
-protocol MovieDetailVCDelegate: AnyObject {
-    func didTapInfoButton()
-}
-
 class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
     
     let imageView: UIImageView = {
@@ -50,19 +46,29 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
         return collectionView
     }()
     
-    let similarMovieHeader = Header(title: "Similar Movies", action: UIAction(handler: { action in
-        
-    }))
+    lazy var similarMovieHeader: Header = {
+        let header = Header(title: "Similar Movies", action: UIAction(handler: { [weak self] action in
+            self?.goToSeeAllScreen()
+        }))
+        return header
+    }()
+
     
     let infoButton = UIBarButtonItem()
     
     var movieId: Int!
     var movie: Movie?
-    var similarMovies: MovieResponse?
+    var similarMovies = [Movie]()
+    var viewModel: MovieDetailViewModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViewController()
+        
+        viewModel?.delegate = self
+        viewModel?.load()
+        viewModel?.getSimilarMovies()
+        
         configureScrollView()
         configureImageView()
         configureMovieInfoView()
@@ -72,16 +78,12 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
         configureCollectionView()
         configurePlayButton()
         configureInfoButton()
-                
-        Task {
-            try await getMovieDetail()
-            try await getSimilarMovies()
-        }
     }
     
     init(id: Int) {
         super.init(nibName: nil, bundle:nil)
         self.movieId = id
+        self.viewModel = MovieDetailViewModel(id: id)
     }
     
     
@@ -107,6 +109,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
         }
     }
     
+    
     func configurePlayButton() {
         playButton.addTarget(self, action: #selector(didTapPlayButton), for: .touchUpInside)
         
@@ -117,6 +120,13 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
             make.centerY.equalTo(imageView.snp.centerY)
         }
     }
+    
+    func goToSeeAllScreen() {
+        print(movieId)
+        let destVC = SeeAllVC(endpoint: .similar, type: "Similar Movies", id: movieId)
+        navigationController?.pushViewController(destVC, animated: true)
+    }
+    
     
     func configureCollectionView() {
         collectionView.delegate = self
@@ -177,36 +187,13 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
     
     
     @objc func infoButtonTapped() {
-        if let movie = movie {
-            if let url = URL(string:movie.homepage ?? "") {
-                presentSafariVC(with: url)
-            }
-            else {
-                presentAlertOnMainThread(title: "Error", message: "Error Alert", buttonTitle: "Ok")
-            }
-        }
+        viewModel?.infoButtonTapped()
     }
     
     
     func configureFavButtonItem() {
-        if let movie = movie {
-            PersistenceManager.isSaved(favorite: movie) { [weak self] result in
-                guard let self = self else { return }
-                self.favButton.target = self
-                switch result {
-                case .success(let isSaved):
-                    if isSaved {
-                        self.favButton.image = UIImage(named: "heart.fill")
-                        self.favButton.action = #selector(removeFavMovie)
-                    } else {
-                        self.favButton.image = UIImage(named: "heart")
-                        self.favButton.action = #selector(addFavMovie)
-                    }
-                case .failure(let error):
-                    self.presentAlertOnMainThread(title: "Error", message: error.rawValue, buttonTitle: "Ok")
-                }
-            }
-        }
+        self.favButton.target = self
+        viewModel?.checkMovieIsSaved()
     }
     
     
@@ -230,7 +217,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
     
     func configureMovieInfoView() {
         contentView.addSubview(movieInfoView)
-                
+        
         movieInfoView.snp.makeConstraints { make in
             make.top.equalTo(imageView.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
@@ -252,41 +239,13 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
     }
     
     
-    func downloadImage() {
-        if let movie = movie {
-            NetworkManager.shared.downloadImage(from:(movie.backdropURL)) { [weak self] image in
-                guard let self = self else { return }
-                DispatchQueue.main.async{
-                    if let image = image{
-                        self.imageView.image = image
-                    }
-                }
-            }
-        }
-    }
-    
-    
     @objc func removeFavMovie() {
-        PersistenceManager.updateWith(favorite: movie!, actionType: .remove) { [weak self] (error: MetflixError?) in
-            guard let self = self else { return }
-            if let error = error {
-                self.presentAlertOnMainThread(title: "Error", message: error.rawValue, buttonTitle: "Ok")
-            } else {
-                configureFavButtonItem()
-            }
-        }
+        viewModel?.removeFavMovie()
     }
     
     
     @objc func addFavMovie() {
-        PersistenceManager.updateWith(favorite: movie!, actionType: .add) { [weak self] (error: MetflixError?) in
-            guard let self = self else { return }
-            if let error = error {
-                self.presentAlertOnMainThread(title: "Error", message: error.rawValue, buttonTitle: "Ok")
-            } else {
-                configureFavButtonItem()
-            }
-        }
+        viewModel?.addFavMovie()
     }
     
     
@@ -298,59 +257,29 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
     }
     
     
-    func getMovieDetail() async throws {
-        showLoadingView()
-        Task{
-            do{
-                self.movie = try await MovieStore.shared.fetchMovieDetail(id: movieId)
-                downloadImage()
-                movieInfoView.set(movie: movie!)
-                starRatingView.rating = movie!.voteAverage
-                title = movie!.title
-                overviewLabel.text = movie!.overview
-                configureFavButtonItem()
-                dismissLoadingView()
-            } catch {
-                presentAlertOnMainThread(title: "Error", message: error.localizedDescription, buttonTitle: "Ok")
-            }
-        }
-    }
-    
-    func getSimilarMovies() async throws {
-        Task {
-            self.similarMovies = try await MovieStore.shared.getSimilarMovies(id: movieId)
-            collectionView.reloadData()
-        }
-    }
-    
     @objc func didTapPlayButton() {
-        Task{
-            let video = try await MovieStore.shared.fetchMovieVideo(id: movieId).results
-            let videoURLKey = video[0].key
-            let url = URL(string:"https://youtube.com/watch?v=\(videoURLKey)")
-            presentSafariVC(with: url!)
-        }
+        viewModel?.fetchMovieVideo()
     }
 }
 
 extension MovieDetailVC: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        similarMovies?.results.count ?? 20
+        similarMovies.count
     }
+    
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SimilarMovieCell.identifier, for: indexPath) as! SimilarMovieCell
-        if let movieList = self.similarMovies{
-            let movie = movieList.results[indexPath.row]
-            cell.set(movie: movie)
-        }
+        let movie = similarMovies[indexPath.row]
+        cell.set(movie: movie)
         return cell
     }
+    
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let movieList = self.similarMovies{
-            let id = movieList.results[indexPath.row].id
-            let destVC = MovieDetailVC(id: id)
-            navigationController?.pushViewController(destVC, animated: true)
-        }
+        let id = similarMovies[indexPath.row].id
+        let destVC = MovieDetailVC(id: id)
+        navigationController?.pushViewController(destVC, animated: true)
     }
 }
 
@@ -367,5 +296,58 @@ extension MovieDetailVC: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 20
+    }
+}
+
+extension MovieDetailVC: MovieDetailViewModelDelegate{
+    func handleOutput(_ output: MovieDetailViewModelOutput) {
+        DispatchQueue.main.async{ [weak self] in
+            guard let self = self else { return }
+            switch output {
+            case .getDetail(let movie):
+                self.movie = movie
+                movieInfoView.set(movie: movie)
+                starRatingView.rating = movie.voteAverage
+                title = movie.title
+                overviewLabel.text = movie.overview
+                configureFavButtonItem()
+                
+            case .setLoading(let bool):
+                switch bool {
+                case true:
+                    showLoadingView()
+                case false:
+                    dismissLoadingView()
+                }
+                
+            case .error(let error):
+                presentAlertOnMainThread(title: "Error", message: error.localizedDescription, buttonTitle: "Ok")
+                
+            case .downloadImage(let image):
+                self.imageView.image = image
+                
+                
+            case .getSimilarMovie(let movies):
+                self.similarMovies = movies
+                self.collectionView.reloadData()
+                
+            case .didTapPlayButton(let videoURL):
+                presentSafariVC(with: videoURL)
+                
+                
+            case .addFavMovie:
+                configureFavButtonItem()
+                
+            case .removeFavMovie:
+                configureFavButtonItem()
+                
+            case .infoButtonTapped(let url):
+                presentSafariVC(with: url)
+                
+            case .configureFavButton(let image, let action):
+                favButton.action = action
+                favButton.image = image
+            }
+        }
     }
 }
