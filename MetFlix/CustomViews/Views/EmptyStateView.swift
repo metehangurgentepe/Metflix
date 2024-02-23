@@ -35,7 +35,7 @@ class EmptyStateView: UIView {
     private func configureLogoImageView() {
         addSubview(logoImageView)
         
-        logoImageView.image = Images.emptyStateLogo
+        logoImageView.image = Images.metflixLogo
         logoImageView.translatesAutoresizingMaskIntoConstraints = false
         
         let logoBottomConstant: CGFloat = DeviceTypes.isiPhoneSE || DeviceTypes.isiPhone8Zoomed ? 100 : 40

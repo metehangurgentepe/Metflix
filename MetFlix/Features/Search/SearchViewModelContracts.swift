@@ -18,7 +18,7 @@ enum SearchViewModelOutput {
     case loadMovies([Movie])
     case setLoading(Bool)
     case selectMovie(Int)
-    case error(Error)
+    case error(MovieError)
 }
 
 protocol SearchViewModelDelegate: AnyObject {

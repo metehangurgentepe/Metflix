@@ -19,7 +19,7 @@ enum MovieListViewModelOutput {
     case popular(MovieResponse)
     case upcoming(MovieResponse)
     case topRated(MovieResponse)
-    case error(Error)
+    case error(MovieError)
     case setLoading(Bool)
     case selectMovie(Int)
     case tappedSeeAll(MovieListEndpoint)

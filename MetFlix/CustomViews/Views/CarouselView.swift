@@ -23,7 +23,7 @@ class CarouselView: UIView {
     private let pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.currentPageIndicatorTintColor = .red
-        pageControl.pageIndicatorTintColor = .cyan
+        pageControl.pageIndicatorTintColor = .white
         pageControl.backgroundStyle = .minimal
         pageControl.numberOfPages = 20
         pageControl.allowsContinuousInteraction = true

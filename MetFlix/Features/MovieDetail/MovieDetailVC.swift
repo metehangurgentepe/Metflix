@@ -10,7 +10,7 @@ import UIKit
 
 class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
     
-    let imageView: UIImageView = {
+    var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 12
         return imageView
@@ -29,7 +29,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
     
     let playButton: UIButton = {
         let button = UIButton()
-        let image = UIImage(named: "playButton")
+        let image = Images.playButton
         button.setImage(image, for: .normal)
         return button
     }()
@@ -52,7 +52,16 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
         }))
         return header
     }()
-
+    
+    let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        stackView.spacing = 10
+        return stackView
+    }()
+    
     
     let infoButton = UIBarButtonItem()
     
@@ -70,6 +79,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
         viewModel?.getSimilarMovies()
         
         configureScrollView()
+        configureStackView()
         configureImageView()
         configureMovieInfoView()
         configureStarRatingView()
@@ -97,10 +107,27 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
         navigationItem.rightBarButtonItems = [favButton, infoButton]
     }
     
+    func configureStackView() {
+        stackView.addArrangedSubview(imageView)
+        stackView.addArrangedSubview(movieInfoView)
+        stackView.addArrangedSubview(starRatingView)
+        stackView.addArrangedSubview(overviewLabel)
+        stackView.addArrangedSubview(similarMovieHeader)
+        stackView.addArrangedSubview(collectionView)
+        
+        scrollView.addSubview(stackView)
+        
+        stackView.snp.makeConstraints { make in
+            make.width.equalTo(scrollView.snp.width)
+            make.top.equalTo(scrollView.snp.top)
+            make.bottom.equalTo(scrollView.snp.bottom)
+            make.trailing.equalTo(scrollView.snp.trailing)
+            make.leading.equalTo(scrollView.snp.leading)
+        }
+    }
+    
     
     func configureHeader() {
-        contentView.addSubview(similarMovieHeader)
-        
         similarMovieHeader.snp.makeConstraints { make in
             make.top.equalTo(overviewLabel.snp.bottom).offset(20)
             make.leading.equalToSuperview().offset(10)
@@ -122,7 +149,6 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
     }
     
     func goToSeeAllScreen() {
-        print(movieId)
         let destVC = SeeAllVC(endpoint: .similar, type: "Similar Movies", id: movieId)
         navigationController?.pushViewController(destVC, animated: true)
     }
@@ -131,8 +157,6 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
     func configureCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
-        
-        contentView.addSubview(collectionView)
         
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(similarMovieHeader.snp.bottom).offset(10)
@@ -156,21 +180,10 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
         scrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
-        contentView.snp.makeConstraints { make in
-            make.height.equalTo(1000)
-            make.width.equalTo(scrollView.snp.width)
-            make.top.equalTo(scrollView.snp.top).offset(0)
-            make.bottom.equalTo(scrollView.snp.bottom)
-            make.trailing.equalTo(scrollView.snp.trailing)
-            make.leading.equalTo(scrollView.snp.leading)
-        }
     }
     
     
     func configureOverviewLabel() {
-        contentView.addSubview(overviewLabel)
-        
         overviewLabel.snp.makeConstraints { make in
             make.top.equalTo(starRatingView.snp.bottom).offset(20)
             make.leading.equalToSuperview().offset(20)
@@ -180,7 +193,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
     
     
     func configureInfoButton() {
-        infoButton.image = UIImage(named: "info.circle")
+        infoButton.image = Images.infoButton
         infoButton.target = self
         infoButton.action = #selector(infoButtonTapped)
     }
@@ -204,10 +217,8 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
         
         let imageHeight = 438 / imageWidth
         
-        contentView.addSubview(imageView)
-        
         imageView.snp.makeConstraints { make in
-            make.top.equalTo(contentView.snp.topMargin)
+            make.top.equalToSuperview()
             make.trailing.equalToSuperview()
             make.leading.equalToSuperview()
             make.height.equalTo(imageHeight)
@@ -216,8 +227,6 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
     
     
     func configureMovieInfoView() {
-        contentView.addSubview(movieInfoView)
-        
         movieInfoView.snp.makeConstraints { make in
             make.top.equalTo(imageView.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
@@ -228,11 +237,8 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate {
     
     
     func configureStarRatingView() {
-        contentView.addSubview(starRatingView)
-        
         starRatingView.snp.makeConstraints { make in
-            make.top.equalTo(movieInfoView.snp.bottom).offset(10)
-            make.centerX.equalTo(movieInfoView.snp.centerX)
+            make.centerX.equalToSuperview()
             make.height.equalTo(24)
             make.width.equalTo(150)
         }
@@ -283,6 +289,7 @@ extension MovieDetailVC: UICollectionViewDataSource, UICollectionViewDelegate {
     }
 }
 
+
 extension MovieDetailVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 235, height: 350)
@@ -298,6 +305,7 @@ extension MovieDetailVC: UICollectionViewDelegateFlowLayout {
         return 20
     }
 }
+
 
 extension MovieDetailVC: MovieDetailViewModelDelegate{
     func handleOutput(_ output: MovieDetailViewModelOutput) {
@@ -325,7 +333,6 @@ extension MovieDetailVC: MovieDetailViewModelDelegate{
                 
             case .downloadImage(let image):
                 self.imageView.image = image
-                
                 
             case .getSimilarMovie(let movies):
                 self.similarMovies = movies

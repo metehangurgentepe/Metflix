@@ -27,18 +27,18 @@ class TabBarViewController: UITabBarController {
         
         let home = self.createNav(
             with: firstVC.title,
-            and: UIImage(systemName:"house"),
-            selectedImage: UIImage(systemName:"house.fill"),
+            and: SFSymbols.home,
+            selectedImage: SFSymbols.selectedHome,
             vc: firstVC.viewController)
         let search = self.createNav(
             with: secondVC.title,
-            and: UIImage(systemName: "magnifyingglass"), 
-            selectedImage: UIImage(systemName: "magnifyingglass.circle.fill"),
+            and: SFSymbols.search,
+            selectedImage: SFSymbols.selectedSearch,
             vc: secondVC.viewController)
         let saved = self.createNav(
             with: thirdVC.title,
-            and: UIImage(systemName:"heart"),
-            selectedImage: UIImage(systemName:"heart.fill"),
+            and: SFSymbols.favorites,
+            selectedImage: SFSymbols.selectedFavorites,
             vc: thirdVC.viewController)
         
         self.setViewControllers([home,search,saved], animated: true)

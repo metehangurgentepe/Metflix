@@ -29,7 +29,7 @@ class StarRatingView: UIView {
 
     private func setupStars() {
         for _ in 0..<5 {
-            let starImageView = UIImageView(image: UIImage(systemName: "star.fill"))
+            let starImageView = UIImageView(image: SFSymbols.starFill)
             starImageView.contentMode = .scaleAspectFit
             starImageView.tintColor = .orange
             starImageViews.append(starImageView)
@@ -45,11 +45,11 @@ class StarRatingView: UIView {
 
         for (index, starImageView) in starImageViews.enumerated() {
             if index < filledStars {
-                starImageView.image = UIImage(systemName: "star.fill")
+                starImageView.image = SFSymbols.starFill
             } else if index == filledStars && remainder > 0 {
-                starImageView.image = UIImage(systemName: "star.lefthalf.fill")
+                starImageView.image = SFSymbols.halfStar
             } else {
-                starImageView.image = UIImage(systemName: "star")
+                starImageView.image = SFSymbols.star
             }
         }
     }

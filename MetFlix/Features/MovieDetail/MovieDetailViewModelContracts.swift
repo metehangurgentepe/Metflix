@@ -16,7 +16,7 @@ protocol MovieDetailViewModelProtocol {
 enum MovieDetailViewModelOutput {
     case getDetail(Movie)
     case setLoading(Bool)
-    case error(Error)
+    case error(MovieError)
     case downloadImage(UIImage)
     case getSimilarMovie([Movie])
     case didTapPlayButton(URL)

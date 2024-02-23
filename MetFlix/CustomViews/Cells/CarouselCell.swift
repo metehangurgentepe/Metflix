@@ -11,7 +11,7 @@ class CarouselCell: UICollectionViewCell {
     
     static var identifier: String = "CarouselCell"
     
-    let imageView: UIImageView = UIImageView(image: UIImage(named: "fight_club"))
+    let imageView: UIImageView = UIImageView(image: Images.defaultPhoto)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -23,15 +23,7 @@ class CarouselCell: UICollectionViewCell {
     }
     
     func set(imageUrl: URL ) {
-        NetworkManager.shared.downloadImage(from:imageUrl) { [weak self] image in
-            guard let self = self else { return }
-            DispatchQueue.main.async{
-                if let image = image{
-                    let scaledImage = UIImage(cgImage: image.cgImage!, scale: 0.2, orientation: image.imageOrientation)
-                    self.imageView.image = scaledImage
-                }
-            }
-        }
+        imageView.sd_setImage(with: imageUrl)
     }
     
     private func setupImageView() {

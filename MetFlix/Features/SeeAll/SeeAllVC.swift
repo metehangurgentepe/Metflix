@@ -52,6 +52,7 @@ class SeeAllVC: DataLoadingVC {
         title = movieType
     }
     
+    
     func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: UIHelper.createThreeColumntFlowLayout(in: view))
         view.addSubview(collectionView)
@@ -60,6 +61,7 @@ class SeeAllVC: DataLoadingVC {
         collectionView.register(SeeAllCell.self, forCellWithReuseIdentifier: SeeAllCell.identifier)
     }
     
+    
     func configureDataSource() {
         dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, movie in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SeeAllCell.identifier, for: indexPath) as! SeeAllCell
@@ -67,6 +69,7 @@ class SeeAllVC: DataLoadingVC {
             return cell
         })
     }
+    
     
     func updatedData(on movies: [Movie]) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Movie>()
@@ -79,22 +82,25 @@ class SeeAllVC: DataLoadingVC {
     }
 }
 
+
 extension SeeAllVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let movie = movies[indexPath.item]
-        let destVC = MovieDetailVC(id: movie.id)
-        navigationController?.pushViewController(destVC, animated: true)
+        let movieId = movies[indexPath.item].id
+        viewModel?.selectMovie(id: movieId)
     }
+    
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if !decelerate {
             handleScrollEnd(scrollView)
         }
     }
+    
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         handleScrollEnd(scrollView)
     }
+    
 
     func handleScrollEnd(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
@@ -109,6 +115,7 @@ extension SeeAllVC: UICollectionViewDelegate {
     }
 }
 
+
 extension SeeAllVC: SeeAllViewModelDelegate {
     func handleOutput(_ output: SeeAllViewModelOutput) {
         switch output {
@@ -118,10 +125,14 @@ extension SeeAllVC: SeeAllViewModelDelegate {
                 self.movies = movies
                 self.updatedData(on: movies)
             }
+            
         case .error(let error):
             presentAlertOnMainThread(title: "Error", message: error.localizedDescription, buttonTitle: "Ok")
-        case .selectMovie(let int):
-            break
+            
+        case .selectMovie(let id):
+            let destVC = MovieDetailVC(id: id)
+            navigationController?.pushViewController(destVC, animated: true)
+            
         case .setLoading(let bool):
             switch bool {
             case true:

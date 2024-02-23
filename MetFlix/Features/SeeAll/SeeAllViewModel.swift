@@ -34,5 +34,9 @@ class SeeAllViewModel: SeeAllViewModelProtocol {
             self.delegate?.handleOutput(.setLoading(false))
         }
     }
+    
+    func selectMovie(id: Int) {
+        self.delegate?.handleOutput(.selectMovie(id))
+    }
 
 }

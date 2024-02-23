@@ -14,7 +14,7 @@ protocol SeeAllViewModelProtocol {
 
 enum SeeAllViewModelOutput {
     case movieList([Movie])
-    case error(Error)
+    case error(MovieError)
     case selectMovie(Int)
     case setLoading(Bool)
 }

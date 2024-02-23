@@ -12,7 +12,7 @@ class SeeAllCell: UICollectionViewCell {
     
     let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "questionmark")
+        imageView.image = SFSymbols.question
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 8
@@ -42,15 +42,7 @@ class SeeAllCell: UICollectionViewCell {
     
     func set(movie: Movie) {
         nameLabel.text = movie.title
-        NetworkManager.shared.downloadImage(from:(movie.posterURL)) { [weak self] image in
-            guard let self = self else { return }
-            DispatchQueue.main.async{
-                if let image = image{
-                    let scaledImage = UIImage(cgImage: image.cgImage!, scale: 0.2, orientation: image.imageOrientation)
-                    self.imageView.image = scaledImage
-                }
-            }
-        }
+        imageView.sd_setImage(with: movie.posterURL)
     }
     
     

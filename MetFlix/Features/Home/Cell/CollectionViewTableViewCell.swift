@@ -24,7 +24,6 @@ class CollectionViewTableViewCell: UITableViewCell {
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-//        delegate?.didSelectMovie(movieId: 238)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -60,7 +59,7 @@ class CollectionViewTableViewCell: UITableViewCell {
         }
     }
     
-    public func configure(movies: [Movie],delegate: HomeVCCarouselDelegate) {
+    public func configure(movies: [Movie], delegate: HomeVCCarouselDelegate) {
         self.movieArr = movies
         self.delegate = delegate
         DispatchQueue.main.async{
@@ -82,7 +81,6 @@ extension CollectionViewTableViewCell: UICollectionViewDataSource, UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("asdf")
         let movieId = movieArr[indexPath.row].id
         delegate?.didSelectMovie(movieId: movieId)
     }

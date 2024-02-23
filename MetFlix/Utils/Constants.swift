@@ -39,17 +39,34 @@ enum DeviceTypes {
 }
 
 enum Images {
-    static let ghLogo = UIImage(named: "gh-logo")
-    static let placeholder = UIImage(named: "avatar-placeholder")
-    static let emptyStateLogo = UIImage(named: "empty-state-logo")
+    static let metflixLogo = UIImage(named: "metflixIcon")
+    static let infoButton = UIImage(named: "info.circle")
+    static let playButton = UIImage(named: "playButton")
+    static let defaultPhoto = UIImage(named: "fight_club")
+    
 }
 
 
 enum SFSymbols {
-    static let location      = UIImage(systemName: "mappin.and.ellipse")
-    static let repos         = UIImage(systemName: "folder")
-    static let gists         = UIImage(systemName: "text.alignleft")
-    static let followers     = UIImage(systemName:"heart")
-    static let following     = UIImage(systemName:"person.2")
+    static let person =  UIImage(systemName: "person")
+    static let playRectangle = UIImage(systemName:"play.rectangle")
+    static let home = UIImage(systemName:"house")
+    static let selectedHome = UIImage(systemName:"house.fill")
+    static let search = UIImage(systemName: "magnifyingglass")
+    static let selectedSearch = UIImage(systemName: "magnifyingglass.circle.fill")
+    static let favorites = UIImage(systemName:"heart")
+    static let selectedFavorites = UIImage(systemName:"heart.fill")
+    static let followers = UIImage(systemName:"heart")
+    static let following = UIImage(systemName:"person.2")
+    static let filter = UIImage(systemName: "line.3.horizontal.decrease.circle.fill")
+    static let question = UIImage(systemName: "questionmark")
+    static let starFill = UIImage(systemName: "star.fill")
+    static let star = UIImage(systemName: "star.fill")
+    static let halfStar = UIImage(systemName: "star.lefthalf.fill")
+    static let lane = UIImage(systemName: "lane")
     
+}
+
+enum Genre {
+    static let allCases = ["Comedy", "Family", "Action", "Drama", "Fantasy", "Science Fiction"]
 }

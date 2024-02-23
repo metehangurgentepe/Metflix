@@ -15,7 +15,7 @@ protocol FavoriteViewModelProtocol {
 
 enum FavoriteViewModelOutput{
     case favoriteList([Movie])
-    case error(Error)
+    case error(MovieError)
     case selectMovie(Int)
     case filter(String)
 }

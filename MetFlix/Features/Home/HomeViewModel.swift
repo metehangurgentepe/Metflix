@@ -34,7 +34,7 @@ class HomeViewModel: MovielistViewModelProtocol {
                 
                 self.delegate?.handleOutput(.setLoading(false))
             } catch {
-                self.delegate?.handleOutput(.error(error))
+                self.delegate?.handleOutput(.error(error as! MovieError))
                 self.delegate?.handleOutput(.setLoading(false))
             }
         }

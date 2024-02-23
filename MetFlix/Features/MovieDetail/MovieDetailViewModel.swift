@@ -7,12 +7,14 @@
 
 import Foundation
 import UIKit
+import SDWebImage
 
 
 final class MovieDetailViewModel: MovieDetailViewModelProtocol{
     var delegate: MovieDetailViewModelDelegate?
     var id: Int
     var movie: Movie?
+    
     
     init(id: Int) {
         self.id = id
@@ -21,19 +23,29 @@ final class MovieDetailViewModel: MovieDetailViewModelProtocol{
     func load() {
         self.delegate?.handleOutput(.setLoading(true))
         Task{
-            self.movie = try await MovieStore.shared.fetchMovieDetail(id: id)
-            self.delegate?.handleOutput(.getDetail(self.movie!))
-            downloadImage()
+            do{
+                self.movie = try await MovieStore.shared.fetchMovieDetail(id: id)
+                self.delegate?.handleOutput(.getDetail(self.movie!))
+                downloadImage()
+            } catch {
+                self.delegate?.handleOutput(.error(error as! MovieError))
+            }
         }
         self.delegate?.handleOutput(.setLoading(false))
     }
     
+    
     func getSimilarMovies() {
         Task{
-            let movies = try await MovieStore.shared.getSimilarMovies(id: id).results
-            self.delegate?.handleOutput(.getSimilarMovie(movies))
+            do{
+                let movies = try await MovieStore.shared.getSimilarMovies(id: id).results
+                self.delegate?.handleOutput(.getSimilarMovie(movies))
+            } catch {
+                self.delegate?.handleOutput(.error(error as! MovieError))
+            }
         }
     }
+    
     
     func fetchMovieVideo() {
         Task{
@@ -45,8 +57,9 @@ final class MovieDetailViewModel: MovieDetailViewModelProtocol{
         }
     }
     
+    
     @objc func addFavMovie() {
-        PersistenceManager.updateWith(favorite: movie!, actionType: .add) { [weak self] (error: MetflixError?) in
+        PersistenceManager.updateWith(favorite: movie!, actionType: .add) { [weak self] (error: MovieError?) in
             guard let self = self else { return }
             if let error = error {
                 self.delegate?.handleOutput(.error(error))
@@ -56,8 +69,9 @@ final class MovieDetailViewModel: MovieDetailViewModelProtocol{
         }
     }
     
+    
     @objc func removeFavMovie() {
-        PersistenceManager.updateWith(favorite: movie!, actionType: .remove) { [weak self] (error: MetflixError?) in
+        PersistenceManager.updateWith(favorite: movie!, actionType: .remove) { [weak self] (error: MovieError?) in
             guard let self = self else { return }
             if let error = error {
                 self.delegate?.handleOutput(.error(error))
@@ -67,6 +81,7 @@ final class MovieDetailViewModel: MovieDetailViewModelProtocol{
         }
     }
     
+    
     func checkMovieIsSaved() {
         if let movie = self.movie {
             PersistenceManager.isSaved(favorite: movie) { [weak self] result in
@@ -74,11 +89,11 @@ final class MovieDetailViewModel: MovieDetailViewModelProtocol{
                 switch result {
                 case .success(let isSaved):
                     if isSaved {
-                        let image = UIImage(named: "heart.fill")
+                        let image = SFSymbols.selectedFavorites
                         let action = #selector(removeFavMovie)
                         self.delegate?.handleOutput(.configureFavButton(image!, action))
                     } else {
-                        let image = UIImage(named: "heart")
+                        let image = SFSymbols.favorites
                         let action = #selector(addFavMovie)
                         self.delegate?.handleOutput(.configureFavButton(image!, action))
                     }
@@ -89,6 +104,7 @@ final class MovieDetailViewModel: MovieDetailViewModelProtocol{
         }
     }
     
+    
     func infoButtonTapped() {
         if let movie = movie {
             if let url = URL(string:movie.homepage ?? "") {
@@ -97,16 +113,21 @@ final class MovieDetailViewModel: MovieDetailViewModelProtocol{
         }
     }
     
+    
     func downloadImage() {
         if let movie = self.movie {
-            NetworkManager.shared.downloadImage(from:(movie.backdropURL)) { [weak self] image in
-                guard let self = self else { return }
-                DispatchQueue.main.async{
-                    if let image = image{
+            SDWebImageManager.shared.loadImage(
+                with: movie.backdropURL,
+                options: .highPriority,
+                progress: nil) { (image, data, error, cacheType, isFinished, imageUrl) in
+                    if let image = image {
                         self.delegate?.handleOutput(.downloadImage(image))
+                    } else {
+                        if let error = error{
+                            self.delegate?.handleOutput(.error(error as! MovieError))
+                        }
                     }
                 }
-            }
         }
     }
 }

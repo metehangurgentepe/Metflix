@@ -26,19 +26,18 @@ class MovieInfoView: UIView {
     let genreLabel: UILabel = {
         let label = UILabel()
         label.textColor = .secondaryLabel
-        //        label.font = .preferredFont(forTextStyle: .)
         return label
     }()
     
     let imageView: UIImageView = {
         let imageview = UIImageView()
-        imageview.image = UIImage(systemName: "lane")
+        imageview.image = SFSymbols.lane
         return imageview
     }()
     
     let imageView2: UIImageView = {
         let imageview = UIImageView()
-        imageview.image = UIImage(systemName: "lane")
+        imageview.image = SFSymbols.lane
         return imageview
     }()
     
@@ -74,14 +73,14 @@ class MovieInfoView: UIView {
     }
     
     private func configure() {
-        var line = verticalLine
+        let line = verticalLine
         
         line.snp.makeConstraints { make in
             make.width.equalTo(3)
             make.height.equalTo(50)
         }
         
-        var line2 = verticalLine2
+        let line2 = verticalLine2
         
         line2.snp.makeConstraints { make in
             make.width.equalTo(3)

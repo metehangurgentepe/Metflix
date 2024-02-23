@@ -45,16 +45,12 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.delegate = self
+        viewModel.load()
+        configureNavBar()
         collectionSetup()
         setupLayout()
         view.backgroundColor = .systemBackground
-        viewModel.delegate = self
-        viewModel.load()
-    }
-    
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
     }
     
     
@@ -64,10 +60,7 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
         headerView.movies = popularMovies
         headerView.delegate = self
         tableView.tableHeaderView = headerView
-        
-        headerView.highlightSelectedItem()
     }
-    
     
     
     private func collectionSetup() {
@@ -87,11 +80,22 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
         }
     }
     
+    private func configureNavBar() {
+        var image = Images.metflixLogo?.resized(to: CGSize(width: 50, height: 50))
+        image = image?.withRenderingMode(.alwaysOriginal)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: nil)
+        
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(image: SFSymbols.person, style: .done, target: self, action: nil),
+            UIBarButtonItem(image: SFSymbols.playRectangle, style: .done, target: self, action: nil)
+        ]
+    }
+    
     
     private func setupLayout() {
         configureTableView()
     }
-
+    
     
     func didSelectMovie(movieId: Int) {
         viewModel.selectMovie(id: movieId)
@@ -178,47 +182,43 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension HomeViewController: MovieListViewModelDelegate {
     func handleOutput(_ output: MovieListViewModelOutput) {
-        switch output {
-        case .popular(let popular):
-            DispatchQueue.main.async{ [weak self] in
-                guard let self = self else { return }
+        DispatchQueue.main.async{ [weak self] in
+            guard let self = self else { return }
+            switch output {
+            case .popular(let popular):
                 self.popularMovies = popular
-                tableView.reloadData()
                 setupHeaderView()
-            }
-        case .upcoming(let upcoming):
-            DispatchQueue.main.async{ [weak self] in
-                guard let self = self else { return }
+                
+            case .upcoming(let upcoming):
                 self.upcomingMovies = upcoming
-                tableView.reloadData()
-            }
-        case .topRated(let topRated):
-            DispatchQueue.main.async{ [weak self] in
-                guard let self = self else { return }
+                
+            case .topRated(let topRated):
                 self.topRatedMovies = topRated
-                tableView.reloadData()
-            }
-        case .nowPlaying(let nowPlayingList):
-            DispatchQueue.main.async{ [weak self] in
-                guard let self = self else { return }
+                
+            case .nowPlaying(let nowPlayingList):
                 self.nowPlayingMovies = nowPlayingList
-                tableView.reloadData()
+                
+            case .error(let error):
+                presentAlertOnMainThread(title: "Error", message: error.localizedDescription, buttonTitle: "Ok")
+                
+            case .setLoading(let bool):
+                switch bool {
+                case true:
+                    showLoadingView()
+                    
+                case false:
+                    dismissLoadingView()
+                    tableView.reloadData()
+                }
+                
+            case .selectMovie(let id):
+                let destVC = MovieDetailVC(id: id)
+                navigationController?.pushViewController(destVC, animated: true)
+                
+            case .tappedSeeAll(let endpoint):
+                let destVC = SeeAllVC(endpoint: endpoint, type: endpoint.description)
+                navigationController?.pushViewController(destVC, animated: true)
             }
-        case .error(let error):
-            presentAlertOnMainThread(title: "Error", message: error.localizedDescription, buttonTitle: "Ok")
-        case .setLoading(let bool):
-            switch bool {
-            case true:
-                showLoadingView()
-            case false:
-                dismissLoadingView()
-            }
-        case .selectMovie(let id):
-            let destVC = MovieDetailVC(id: id)
-            navigationController?.pushViewController(destVC, animated: true)
-        case .tappedSeeAll(let endpoint):
-            let destVC = SeeAllVC(endpoint: endpoint, type: endpoint.description)
-            navigationController?.pushViewController(destVC, animated: true)
         }
     }
 }

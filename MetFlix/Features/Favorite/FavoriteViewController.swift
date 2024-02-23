@@ -41,7 +41,7 @@ class FavoriteViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Favorites"
         
-        let filterButton = UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal.decrease.circle.fill"),
+        let filterButton = UIBarButtonItem(image: SFSymbols.filter,
                                            style: .done,
                                            target: self,
                                            action: #selector(filterButtonTapped))
@@ -121,7 +121,6 @@ extension FavoriteViewController: UICollectionViewDelegate {
     }
 }
 
-// Implement UIPickerViewDataSource and UIPickerViewDelegate methods
 extension FavoriteViewController: UIPickerViewDataSource, UIPickerViewDelegate {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1

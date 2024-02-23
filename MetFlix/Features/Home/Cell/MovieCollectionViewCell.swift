@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class MovieCollectionViewCell: UICollectionViewCell {
     static let identifier = "MovieCollectionCell"
@@ -38,15 +39,6 @@ class MovieCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(movie: Movie) {
-        NetworkManager.shared.downloadImage(from:(movie.posterURL)) { [weak self] image in
-            guard let self = self else { return }
-            DispatchQueue.main.async{
-                if let image = image{
-                    self.posterImageView.image = image
-                }
-            }
-        }
+        posterImageView.sd_setImage(with: movie.posterURL)
     }
-    
-    
 }

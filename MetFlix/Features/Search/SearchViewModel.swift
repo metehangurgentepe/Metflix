@@ -13,15 +13,23 @@ class SearchViewModel: SearchViewModelProtocol{
     
     func load() {
         Task{
-            let movies = try await MovieStore.shared.fetchMovies(from: .popular).results
-            self.delegate?.handleOutput(.loadMovies(movies))
+            do{
+                let movies = try await MovieStore.shared.fetchMovies(from: .popular).results
+                self.delegate?.handleOutput(.loadMovies(movies))
+            } catch {
+                self.delegate?.handleOutput(.error(error as! MovieError))
+            }
         }
     }
     
     func search(filter: String) {
         Task{
-            let filteredMovies = try await MovieStore.shared.searchMovie(query: filter).results
-            self.delegate?.handleOutput(.getMoviesBySearch(filteredMovies))
+            do{
+                let filteredMovies = try await MovieStore.shared.searchMovie(query: filter).results
+                self.delegate?.handleOutput(.getMoviesBySearch(filteredMovies))
+            } catch {
+                self.delegate?.handleOutput(.error(error as! MovieError))
+            }
         }
     }
 }
