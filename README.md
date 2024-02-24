@@ -1,5 +1,5 @@
 
-# WhichFood
+# Metflix
 
 
 
@@ -35,9 +35,9 @@
 **Github** 
 
   
-## API Kullanımı
+## API Usage
 
-#### Getopular movies
+#### Get popular movies
 
 ```http
   GET /api/movie/popular?language=en-US
