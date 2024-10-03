@@ -8,10 +8,14 @@
 import XCTest
 @testable import MetFlix
 
+
 final class MetFlixTests: XCTestCase {
+    var sut: HomeViewController!
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        try super.setUpWithError()
+        sut = HomeViewController()
     }
 
     override func tearDownWithError() throws {
@@ -31,6 +35,10 @@ final class MetFlixTests: XCTestCase {
         self.measure {
             // Put the code you want to measure the time of here.
         }
+    }
+    
+    func testSomething() {
+        let test = sut.nowPlayingMovies?.results.count
     }
 
 }

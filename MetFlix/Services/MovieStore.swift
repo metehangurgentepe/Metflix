@@ -27,6 +27,13 @@ class MovieStore: MovieService {
         return try await self.loadURLAndDecode(url: url, page: 1)
     }
     
+    func fetchSeries(from endpoint: MovieListEndpoint) async throws -> SeriesResponse {
+        guard let url = URL(string: "\(baseAPIURL)/tv/\(endpoint.rawValue)") else {
+            throw MovieError.invalidEndpoint
+        }
+        return try await self.loadURLAndDecode(url: url, page: 1)
+    }
+    
 
     func fetchMoviesList(from endpoint: MovieListEndpoint, page: Int, id: Int?) async throws -> MovieResponse {
         if endpoint.rawValue == "similar" && id != nil{

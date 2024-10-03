@@ -20,6 +20,7 @@ enum MovieListEndpoint: String, CaseIterable {
     case topRated = "top_rated"
     case popular
     case similar
+    case popularSeries
     
     var description: String {
         switch self {
@@ -28,6 +29,7 @@ enum MovieListEndpoint: String, CaseIterable {
         case .topRated: return "Top Rated"
         case .popular: return "Popular"
         case .similar: return "Similar Movies"
+        case .popularSeries: return "Popular Series"
         }
     }
 }

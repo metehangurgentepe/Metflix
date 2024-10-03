@@ -33,9 +33,10 @@ class Header: UITableViewHeaderFooterView {
         configure()
     }
     
-    convenience init(title: String, action: UIAction) {
+    convenience init(title: String, action: UIAction?) {
         self.init(reuseIdentifier: nil)
         titleLabel.text = title
+        guard let action else { return }
         seeAllButton.addAction(action, for: .touchUpInside)
     }
     
@@ -58,5 +59,4 @@ class Header: UITableViewHeaderFooterView {
             make.leading.equalToSuperview().offset(10)
         }
     }
-    
 }

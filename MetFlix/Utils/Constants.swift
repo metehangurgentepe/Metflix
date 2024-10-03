@@ -35,15 +35,14 @@ enum DeviceTypes {
     static func isiPhoneXAspectRatio() -> Bool {
         return isiPhoneX || isiPhoneXsMaxAndXr
     }
-    
 }
+
 
 enum Images {
     static let metflixLogo = UIImage(named: "metflixIcon")
     static let infoButton = UIImage(named: "info.circle")
     static let playButton = UIImage(named: "playButton")
     static let defaultPhoto = UIImage(named: "fight_club")
-    
 }
 
 
@@ -64,7 +63,8 @@ enum SFSymbols {
     static let star = UIImage(systemName: "star.fill")
     static let halfStar = UIImage(systemName: "star.lefthalf.fill")
     static let lane = UIImage(systemName: "lane")
-    
+    static let newAndPopular = UIImage(systemName: "play.rectangle.on.rectangle")
+    static let selectedNewAndPopular = UIImage(systemName: "play.rectangle.on.rectangle.fill")
 }
 
 enum Genre {

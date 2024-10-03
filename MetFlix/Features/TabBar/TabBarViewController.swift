@@ -15,9 +15,20 @@ class TabBarViewController: UITabBarController {
         super.viewDidLoad()
         self.viewControllers = TabBarModel.createTabBarItems().map{ $0.viewController }
         setupTabs()
-        self.tabBar.tintColor = .red
-        self.tabBar.isTranslucent = true
-        UITabBar.appearance().barTintColor = .clear
+        tabBar.isTranslucent = true
+        tabBar.barStyle = .default
+        tabBar.tintColor = .white
+        
+        let blurEffect = UIBlurEffect(style: .light)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.frame = tabBar.bounds
+        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        tabBar.insertSubview(blurEffectView, at: 0)
+        
+        NSLayoutConstraint.activate([
+            view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+        ])
     }
     
     private func setupTabs() {
@@ -32,8 +43,8 @@ class TabBarViewController: UITabBarController {
             vc: firstVC.viewController)
         let search = self.createNav(
             with: secondVC.title,
-            and: SFSymbols.search,
-            selectedImage: SFSymbols.selectedSearch,
+            and: SFSymbols.newAndPopular,
+            selectedImage: SFSymbols.selectedNewAndPopular,
             vc: secondVC.viewController)
         let saved = self.createNav(
             with: thirdVC.title,

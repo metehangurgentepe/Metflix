@@ -122,6 +122,7 @@ extension SearchViewController: SearchViewModelDelegate{
         case .selectMovie(let id):
             let destVC = MovieDetailVC(id: id)
             navigationController?.pushViewController(destVC, animated: true)
+            
         case .error(let error):
             presentAlertOnMainThread(title: "Error", message: error.localizedDescription, buttonTitle: "Ok")
         }

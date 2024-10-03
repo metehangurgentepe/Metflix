@@ -36,4 +36,8 @@ class FavoriteViewModel: FavoriteViewModelProtocol {
             }
         }
     }
+    
+    func selectMovie(id:Int) {
+        self.delegate?.handleOutput(.selectMovie(id))
+    }
 }

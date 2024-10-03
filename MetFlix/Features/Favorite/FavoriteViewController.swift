@@ -115,9 +115,8 @@ class FavoriteViewController: UIViewController {
 
 extension FavoriteViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let movie = movies[indexPath.item]
-        let destVC = MovieDetailVC(id: movie.id)
-        navigationController?.pushViewController(destVC, animated: true)
+        let movieId = movies[indexPath.item].id
+        viewModel.selectMovie(id: movieId)
     }
 }
 
@@ -144,10 +143,14 @@ extension FavoriteViewController: FavoriteViewModelDelegate {
         case .favoriteList(let movies):
             self.movies = movies
             updatedData(on: self.movies)
+            
         case .error(let error):
             presentAlertOnMainThread(title: "Error", message: error.localizedDescription, buttonTitle: "Ok")
-        case .selectMovie(let int):
-            print(int)
+            
+        case .selectMovie(let id):
+            let destVC = MovieDetailVC(id: id)
+            navigationController?.pushViewController(destVC, animated: true)
+            
         case .filter(let genreName):
             var filteredMovies: [Movie] = []
             

@@ -13,11 +13,15 @@ protocol HomeVCCarouselDelegate: AnyObject {
 }
 
 class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
-    enum Section {
-        case nowPlaying
-        case popular
-        case upcoming
-        case topRated
+    enum Section: Int, CaseIterable {
+        case nowPlaying = 0
+        case popular = 1
+        case upcoming = 2
+        case topRated = 3
+
+        static var numberOfSections: Int {
+            return Section.allCases.count
+        }
     }
     
     let scrollView: UIScrollView = {
@@ -28,7 +32,7 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
     
     let contentView = UIView()
     
-    var tableView = UITableView()
+    var tableView = UITableView(frame: .zero, style: .grouped)
     
     var nowPlayingMovies: MovieResponse?
     var popularMovies: MovieResponse?
@@ -51,6 +55,8 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
         collectionSetup()
         setupLayout()
         view.backgroundColor = .systemBackground
+//        navigationController?.navigationBar.applyBlurEffect()
+        navigationController?.navigationBar.isTranslucent = true
     }
     
     
@@ -70,6 +76,7 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
     
     
     func configureTableView() {
+        tableView.showsVerticalScrollIndicator = false
         tableView.separatorStyle = .none
         tableView.register(CollectionViewTableViewCell.self, forCellReuseIdentifier: CollectionViewTableViewCell.identifier)
         view.addSubview(tableView)
@@ -81,13 +88,26 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
     }
     
     private func configureNavBar() {
-        var image = Images.metflixLogo?.resized(to: CGSize(width: 50, height: 50))
-        image = image?.withRenderingMode(.alwaysOriginal)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: nil)
+        
+        let title = UILabel()
+        title.text = "Metehan için"
+        title.textColor = .white
+        title.font = .preferredFont(forTextStyle: .headline).withSize(24)
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: title)
+        
+        let shareButton = UIBarButtonItem(image: UIImage(systemName: "shareplay"), style: .plain, target: self, action: nil)
+        let downloadButton = UIBarButtonItem(image: UIImage(systemName: "arrow.down.to.line"), style: .plain, target: self, action: nil)
+        let searchButton = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: nil)
+        shareButton.tintColor = .white
+        downloadButton.tintColor = .white
+        searchButton.tintColor = .white
+        navigationItem.rightBarButtonItems?.forEach({ $0.tintColor = .white})
         
         navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(image: SFSymbols.person, style: .done, target: self, action: nil),
-            UIBarButtonItem(image: SFSymbols.playRectangle, style: .done, target: self, action: nil)
+            searchButton,
+            downloadButton,
+            shareButton
         ]
     }
     
@@ -109,7 +129,7 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        4
+        Section.numberOfSections
     }
     
     
@@ -121,19 +141,19 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CollectionViewTableViewCell.identifier, for: indexPath) as! CollectionViewTableViewCell
         switch indexPath.section {
-        case 0:
+        case Section.nowPlaying.rawValue:
             if let movies = nowPlayingMovies?.results {
                 cell.configure(movies: movies, delegate: self)
             }
-        case 1:
+        case Section.popular.rawValue:
             if let movies = popularMovies?.results {
                 cell.configure(movies: movies, delegate: self)
             }
-        case 2:
+        case Section.topRated.rawValue:
             if let movies = topRatedMovies?.results {
                 cell.configure(movies: movies, delegate: self)
             }
-        case 3:
+        case Section.upcoming.rawValue:
             if let movies = upcomingMovies?.results {
                 cell.configure(movies: movies, delegate: self)
             }
@@ -146,22 +166,22 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         switch section {
-        case 0:
+        case Section.nowPlaying.rawValue:
             return Header(title: "Now Playing", action: UIAction(handler: {[weak self] action in
                 guard let self = self else { return }
                 self.goToSeeAllScreen(endpoint: .nowPlaying, type: "Now Playing")
             }))
-        case 1:
+        case Section.popular.rawValue:
             return Header(title: "Popular", action: UIAction(handler: {[weak self] action in
                 guard let self = self else { return }
                 self.goToSeeAllScreen(endpoint: .popular, type: "Popular")
             }))
-        case 2:
+        case Section.topRated.rawValue:
             return Header(title: "Top Rated", action: UIAction(handler: {[weak self] action in
                 guard let self = self else { return }
                 self.goToSeeAllScreen(endpoint: .topRated, type: "Top Rated")
             }))
-        case 3:
+        case Section.upcoming.rawValue:
             return Header(title: "Upcoming", action: UIAction(handler: { [weak self] action in
                 guard let self = self else { return }
                 self.goToSeeAllScreen(endpoint: .upcoming, type: "Upcoming")
