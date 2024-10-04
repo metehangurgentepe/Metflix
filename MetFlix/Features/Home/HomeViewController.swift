@@ -13,7 +13,10 @@ protocol HomeVCCarouselDelegate: AnyObject {
     func didSelectMovie(movieId: Int)
 }
 
-class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
+class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDelegate {
+    private let topContentInset: CGFloat = UIScreen.main.bounds.size.height < 568 ? 30 : 50
+    private let collectionViewHeightReduction: CGFloat = UIScreen.main.bounds.size.height < 568 ? 20 : 30
+    
     let categories = ["TV Shows", "Movies", "Categories"]
     
     enum Section: Int, CaseIterable {
@@ -54,9 +57,8 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
     private var titleViewHeightConstraint: Constraint?
 
     
-    
     let visualEffectView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .systemMaterial)
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterial)
         let visualEffectView = UIVisualEffectView(effect: blurEffect)
         return visualEffectView
     }()
@@ -109,17 +111,11 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
         if offsetY > titleViewHeight && isCollectionViewVisible {
             titleView.hideCollectionView()
             isCollectionViewVisible = false
-            
-            titleView.snp.updateConstraints { make in
-                make.height.equalTo(titleViewHeight - 40)
-            }
-        
+            titleViewHeightConstraint?.update(offset: titleViewHeight - collectionViewHeightReduction)
         } else if offsetY < titleViewHeight && !isCollectionViewVisible {
             titleView.showCollectionView()
             isCollectionViewVisible = true
-            titleView.snp.updateConstraints { make in
-                make.height.equalTo(titleViewHeight)
-            }
+            titleViewHeightConstraint?.update(offset: titleViewHeight)
         }
     }
     
@@ -131,7 +127,7 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
         tableView.register(CollectionViewTableViewCell.self, forCellReuseIdentifier: CollectionViewTableViewCell.identifier)
         view.addSubview(tableView)
         
-        tableView.contentInset = UIEdgeInsets(top: 30 + statusBarHeight, left: 0, bottom: 0, right: 0)
+        tableView.contentInset = UIEdgeInsets(top: topContentInset + statusBarHeight, left: 0, bottom: 0, right: 0)
         
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
@@ -140,6 +136,7 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
     }
     
     private func configureNavBar() {
+        titleView.delegate = self
         let statusbarheight = UIApplication.shared.statusBarFrame.height
         
         visualEffectView.translatesAutoresizingMaskIntoConstraints = false
@@ -177,6 +174,12 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
     
     func goToSeeAllScreen(endpoint: MovieListEndpoint, type: String) {
         viewModel.tappedSeeAll(endpoint: endpoint)
+    }
+    
+    func navigateSearch() {
+        let vc = SuggestedSearchViewController()
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: false)
     }
 }
 

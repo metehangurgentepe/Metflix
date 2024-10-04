@@ -7,6 +7,10 @@
 import UIKit
 import SnapKit
 
+protocol HomeTitleViewDelegate: AnyObject {
+    func navigateSearch()
+}
+
 class HomeTitleView: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     let categories = ["TV Shows", "Movies", "Categories"]
@@ -84,6 +88,8 @@ class HomeTitleView: UIView, UICollectionViewDelegate, UICollectionViewDataSourc
     
     private var collectionViewHeightConstraint: Constraint?
     
+    weak var delegate: HomeTitleViewDelegate?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
@@ -95,6 +101,7 @@ class HomeTitleView: UIView, UICollectionViewDelegate, UICollectionViewDataSourc
     }
     
     private func setupLayout() {
+        searchButton.addTarget(self, action: #selector(searchButtonTapped), for: .touchUpInside)
         addSubviews(topStackView, collectionView)
         
         topStackView.addArrangedSubview(forYouLabel)
@@ -119,7 +126,7 @@ class HomeTitleView: UIView, UICollectionViewDelegate, UICollectionViewDataSourc
         topStackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(40)
             make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(40)
+            make.height.equalTo(45)
         }
         
         collectionView.snp.makeConstraints { make in
@@ -127,7 +134,7 @@ class HomeTitleView: UIView, UICollectionViewDelegate, UICollectionViewDataSourc
             make.leading.trailing.equalToSuperview().inset(16)
             make.width.equalTo(ScreenSize.width)
             self.collectionViewHeightConstraint = make.height.equalTo(30).constraint
-            make.bottom.equalToSuperview().offset(-10)
+            make.bottom.equalToSuperview().offset(-2)
         }
     }
     
@@ -147,6 +154,9 @@ class HomeTitleView: UIView, UICollectionViewDelegate, UICollectionViewDataSourc
         }
     }
     
+    @objc func searchButtonTapped() {
+        delegate?.navigateSearch()
+    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return categories.count

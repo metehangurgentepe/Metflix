@@ -9,8 +9,8 @@ import Foundation
 
 protocol SearchViewModelProtocol {
     var delegate: SearchViewModelDelegate? { get set }
-    func load()
-    func search(filter: String)
+    func load() async
+    func search(filter: String) async
 }
 
 enum SearchViewModelOutput {

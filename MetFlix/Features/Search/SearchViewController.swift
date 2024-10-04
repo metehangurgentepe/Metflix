@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 
 class SearchViewController: DataLoadingVC {
-    
     enum Section {
         case main
     }
@@ -26,7 +25,9 @@ class SearchViewController: DataLoadingVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.delegate = self
-        viewModel.load()
+        Task{
+            await viewModel.load()
+        }
         
         configureViewController()
         configureSearchController()
@@ -90,9 +91,13 @@ extension SearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         let filter = searchController.searchBar.text ?? ""
         if filter.isEmpty {
-            viewModel.load()
+            Task{
+                await viewModel.load()
+            }
         } else {
-            viewModel.search(filter: filter)
+            Task{
+                await viewModel.search(filter: filter)
+            }
         }
     }
 }

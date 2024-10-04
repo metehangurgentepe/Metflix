@@ -1,13 +1,13 @@
 //
-//  CollectionViewTableViewCell.swift
+//  HorizontalMobileCell.swift
 //  MetFlix
 //
-//  Created by Metehan Gürgentepe on 16.02.2024.
+//  Created by Metehan Gürgentepe on 4.10.2024.
 //
 
 import UIKit
 
-class CollectionViewTableViewCell: UITableViewCell {
+class HorizontalMobileTableViewCell: UITableViewCell {
     
     static let identifier = "CollectionTableViewCell"
     
@@ -37,19 +37,18 @@ class CollectionViewTableViewCell: UITableViewCell {
     
     private func createCollectionView() {
         let layout = UICollectionViewFlowLayout()
+        
         layout.scrollDirection = .horizontal
-        
-        let height = 1170 / 200
-        
-        layout.itemSize = CGSize(width: 780 / height, height: 225)
+        layout.itemSize = CGSize(width: 120, height: 160)
         layout.minimumLineSpacing = 10
+        
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.register(MovieCollectionViewCell.self, forCellWithReuseIdentifier: MovieCollectionViewCell.identifier)
+        collectionView.register(HorizontalMobileCollectionViewCell.self, forCellWithReuseIdentifier: HorizontalMobileCollectionViewCell.identifier)
         collectionView.delegate = self
         collectionView.dataSource = self
         contentView.addSubview(collectionView)
         
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         
         collectionView.showsHorizontalScrollIndicator = false
         
@@ -70,13 +69,13 @@ class CollectionViewTableViewCell: UITableViewCell {
     }
 }
 
-extension CollectionViewTableViewCell: UICollectionViewDataSource, UICollectionViewDelegate {
+extension HorizontalMobileTableViewCell: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return movieArr.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.identifier, for: indexPath) as! MovieCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HorizontalMobileCollectionViewCell.identifier, for: indexPath) as! HorizontalMobileCollectionViewCell
         let model = movieArr[indexPath.row]
         cell.configure(movie: model)
         return cell

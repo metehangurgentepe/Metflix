@@ -33,10 +33,10 @@ class HomeTableViewHeader: UIView {
     
     let playButton : UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "play.circle.fill"), for: .normal)
+        button.setImage(UIImage(systemName: "play.fill"), for: .normal)
         button.setTitle("Oynat", for: .normal)
         button.setTitleColor(.black, for: .normal)
-        button.layer.cornerRadius = 6
+        button.layer.cornerRadius = 4
         button.backgroundColor = .white
         button.tintColor = .black
         return button
@@ -47,7 +47,7 @@ class HomeTableViewHeader: UIView {
         button.setTitle("Daha Fazla Bilgi", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .gray
-        button.layer.cornerRadius = 6
+        button.layer.cornerRadius = 4
         return button
     }()
     
@@ -88,16 +88,16 @@ class HomeTableViewHeader: UIView {
         
         playButton.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-20)
-            make.leading.equalTo(imageView.snp.leading).offset(6)
+            make.leading.equalTo(imageView.snp.leading).offset(26)
             make.trailing.equalTo(imageView.snp.centerX).offset(-4)
-            make.height.equalTo(34)
+            make.height.equalTo(40)
         }
         
         moreInfoButton.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-20)
             make.leading.equalTo(imageView.snp.centerX).offset(4)
-            make.trailing.equalTo(imageView.snp.trailing).offset(-6)
-            make.height.equalTo(34)
+            make.trailing.equalTo(imageView.snp.trailing).offset(-26)
+            make.height.equalTo(40)
         }
         
         titleLabel.snp.makeConstraints { make in
