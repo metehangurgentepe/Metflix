@@ -358,3 +358,4 @@ extension MovieDetailVC: MovieDetailViewModelDelegate{
         }
     }
 }
+

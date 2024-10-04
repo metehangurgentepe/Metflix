@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 
 protocol HomeVCCarouselDelegate: AnyObject {
@@ -13,12 +14,14 @@ protocol HomeVCCarouselDelegate: AnyObject {
 }
 
 class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
+    let categories = ["TV Shows", "Movies", "Categories"]
+    
     enum Section: Int, CaseIterable {
         case nowPlaying = 0
         case popular = 1
         case upcoming = 2
         case topRated = 3
-
+        
         static var numberOfSections: Int {
             return Section.allCases.count
         }
@@ -46,26 +49,44 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
     
     weak var delegate: HomeVCCarouselDelegate?
     lazy var viewModel = HomeViewModel()
+    var isCollectionViewVisible = true
+    let titleView = HomeTitleView(frame: .zero)
+    private var titleViewHeightConstraint: Constraint?
+
+    
+    
+    let visualEffectView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .systemMaterial)
+        let visualEffectView = UIVisualEffectView(effect: blurEffect)
+        return visualEffectView
+    }()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationController?.navigationBar.isHidden = true
+        
+        view.backgroundColor = .systemBackground
+        
         viewModel.delegate = self
         viewModel.load()
-        configureNavBar()
+        
         collectionSetup()
         setupLayout()
-        view.backgroundColor = .systemBackground
-//        navigationController?.navigationBar.applyBlurEffect()
-        navigationController?.navigationBar.isTranslucent = true
+        configureNavBar()
     }
     
-    
     func setupHeaderView() {
-        let frame: CGRect = CGRect(x: 0, y: 0, width: screenWidth, height: 340)
-        let headerView = CarouselView(frame: frame)
-        headerView.movies = popularMovies
-        headerView.delegate = self
+        guard let popularMovies = popularMovies, !popularMovies.results.isEmpty else {
+            return
+        }
+        
+        let headerView = HomeTableViewHeader(frame: CGRect(x: 0, y: 0, width: view.frame.width - 20, height: ScreenSize.height * 0.65))
+        headerView.configure(movie: popularMovies.results.first!)
         tableView.tableHeaderView = headerView
+        
+        tableView.layoutIfNeeded()
     }
     
     
@@ -74,41 +95,73 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate {
         tableView.dataSource = self
     }
     
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        
+        if offsetY < -60 {
+            visualEffectView.isHidden = true
+        } else {
+            visualEffectView.isHidden = false
+        }
+        
+        let titleViewHeight: CGFloat = 80 + UIApplication.shared.statusBarFrame.height
+        
+        if offsetY > titleViewHeight && isCollectionViewVisible {
+            titleView.hideCollectionView()
+            isCollectionViewVisible = false
+            
+            titleView.snp.updateConstraints { make in
+                make.height.equalTo(titleViewHeight - 40)
+            }
+        
+        } else if offsetY < titleViewHeight && !isCollectionViewVisible {
+            titleView.showCollectionView()
+            isCollectionViewVisible = true
+            titleView.snp.updateConstraints { make in
+                make.height.equalTo(titleViewHeight)
+            }
+        }
+    }
     
     func configureTableView() {
+        let statusBarHeight = UIApplication.shared.statusBarFrame.height
+        
         tableView.showsVerticalScrollIndicator = false
         tableView.separatorStyle = .none
         tableView.register(CollectionViewTableViewCell.self, forCellReuseIdentifier: CollectionViewTableViewCell.identifier)
         view.addSubview(tableView)
         
+        tableView.contentInset = UIEdgeInsets(top: 30 + statusBarHeight, left: 0, bottom: 0, right: 0)
+        
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.left.right.bottom.equalToSuperview()
         }
     }
     
     private func configureNavBar() {
+        let statusbarheight = UIApplication.shared.statusBarFrame.height
         
-        let title = UILabel()
-        title.text = "Metehan için"
-        title.textColor = .white
-        title.font = .preferredFont(forTextStyle: .headline).withSize(24)
+        visualEffectView.translatesAutoresizingMaskIntoConstraints = false
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: title)
+        titleView.backgroundView = visualEffectView
         
-        let shareButton = UIBarButtonItem(image: UIImage(systemName: "shareplay"), style: .plain, target: self, action: nil)
-        let downloadButton = UIBarButtonItem(image: UIImage(systemName: "arrow.down.to.line"), style: .plain, target: self, action: nil)
-        let searchButton = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: nil)
-        shareButton.tintColor = .white
-        downloadButton.tintColor = .white
-        searchButton.tintColor = .white
-        navigationItem.rightBarButtonItems?.forEach({ $0.tintColor = .white})
+        view.addSubview(titleView)
         
-        navigationItem.rightBarButtonItems = [
-            searchButton,
-            downloadButton,
-            shareButton
-        ]
+        titleView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            self.titleViewHeightConstraint = make.height.equalTo(80 + statusbarheight).constraint
+        }
+        
+        NSLayoutConstraint.activate([
+            visualEffectView.topAnchor.constraint(equalTo: titleView.topAnchor),
+            visualEffectView.leadingAnchor.constraint(equalTo: titleView.leadingAnchor),
+            visualEffectView.trailingAnchor.constraint(equalTo: titleView.trailingAnchor),
+            visualEffectView.bottomAnchor.constraint(equalTo: titleView.bottomAnchor)
+        ])
+        
+        view.bringSubviewToFront(titleView)
     }
     
     
@@ -233,12 +286,35 @@ extension HomeViewController: MovieListViewModelDelegate {
                 
             case .selectMovie(let id):
                 let destVC = MovieDetailVC(id: id)
-                navigationController?.pushViewController(destVC, animated: true)
+                destVC.modalPresentationStyle = .formSheet
+                present(destVC, animated: true)
                 
             case .tappedSeeAll(let endpoint):
                 let destVC = SeeAllVC(endpoint: endpoint, type: endpoint.description)
                 navigationController?.pushViewController(destVC, animated: true)
             }
         }
+    }
+}
+
+extension HomeViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return categories.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as! CategoryCollectionViewCell
+        cell.configure(with: categories[indexPath.row])
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print("Selected: \(categories[indexPath.row])")
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let category = categories[indexPath.row]
+        let width = category.size(withAttributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .medium)]).width + 32
+        return CGSize(width: width, height: 24)
     }
 }

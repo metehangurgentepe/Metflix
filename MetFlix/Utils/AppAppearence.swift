@@ -10,25 +10,29 @@ import UIKit
 
 class AppAppearance {
     static func setupAppearance() {
-        // TabBar görünümünü özelleştir
+        // Tab Bar Appearance
         let tabBarAppearance = UITabBarAppearance()
         tabBarAppearance.configureWithOpaqueBackground()
         tabBarAppearance.backgroundColor = .black // veya istediğiniz renk
-        
+
         UITabBar.appearance().standardAppearance = tabBarAppearance
         if #available(iOS 15.0, *) {
             UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
         }
 
-        // NavigationBar görünümünü özelleştir
+        // Navigation Bar Appearance
         let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithOpaqueBackground()
-        navigationBarAppearance.backgroundColor = .black // veya istediğiniz renk
+        navigationBarAppearance.configureWithTransparentBackground() // Use transparent background for translucency
+        navigationBarAppearance.backgroundColor = .clear // or any desired color
         navigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
         navigationBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
 
         UINavigationBar.appearance().standardAppearance = navigationBarAppearance
         UINavigationBar.appearance().compactAppearance = navigationBarAppearance
         UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
+        
+        // Set UINavigationBar to be translucent
+        UINavigationBar.appearance().isTranslucent = true // Make the navigation bar translucent
     }
+
 }

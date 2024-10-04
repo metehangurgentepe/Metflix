@@ -30,6 +30,9 @@
 		6647FDD92CAED4720006DF58 /* AppAppearence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6647FDD82CAED4720006DF58 /* AppAppearence.swift */; };
 		6647FDDB2CAED5660006DF58 /* UINavigationBar+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6647FDDA2CAED5660006DF58 /* UINavigationBar+Ext.swift */; };
 		6647FDDE2CAEEBDA0006DF58 /* SeriesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6647FDDD2CAEEBDA0006DF58 /* SeriesModel.swift */; };
+		6647FDEF2CAFE0420006DF58 /* HomeTableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6647FDEE2CAFE0420006DF58 /* HomeTableViewHeader.swift */; };
+		6647FDF12CAFF0730006DF58 /* HomeTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6647FDF02CAFF0730006DF58 /* HomeTitleView.swift */; };
+		6647FDF32CB015010006DF58 /* CategoryButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6647FDF22CB015010006DF58 /* CategoryButtonCell.swift */; };
 		664F3CB92B6118DC009C5E3B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CB82B6118DC009C5E3B /* AppDelegate.swift */; };
 		664F3CBB2B6118DC009C5E3B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CBA2B6118DC009C5E3B /* SceneDelegate.swift */; };
 		664F3CBD2B6118DC009C5E3B /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664F3CBC2B6118DC009C5E3B /* HomeViewController.swift */; };
@@ -114,6 +117,9 @@
 		6647FDD82CAED4720006DF58 /* AppAppearence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearence.swift; sourceTree = "<group>"; };
 		6647FDDA2CAED5660006DF58 /* UINavigationBar+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationBar+Ext.swift"; sourceTree = "<group>"; };
 		6647FDDD2CAEEBDA0006DF58 /* SeriesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesModel.swift; sourceTree = "<group>"; };
+		6647FDEE2CAFE0420006DF58 /* HomeTableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTableViewHeader.swift; sourceTree = "<group>"; };
+		6647FDF02CAFF0730006DF58 /* HomeTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTitleView.swift; sourceTree = "<group>"; };
+		6647FDF22CB015010006DF58 /* CategoryButtonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryButtonCell.swift; sourceTree = "<group>"; };
 		664F3CB52B6118DC009C5E3B /* MetFlix.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetFlix.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		664F3CB82B6118DC009C5E3B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		664F3CBA2B6118DC009C5E3B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -429,6 +435,8 @@
 				661853E22B7D8020005E0976 /* EmptyStateView.swift */,
 				666560372B80A23900EC0730 /* Header.swift */,
 				666560392B80AD3500EC0730 /* CarouselView.swift */,
+				6647FDEE2CAFE0420006DF58 /* HomeTableViewHeader.swift */,
+				6647FDF02CAFF0730006DF58 /* HomeTitleView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -438,6 +446,7 @@
 			children = (
 				66C744932B7F51DA00C86788 /* CollectionViewTableViewCell.swift */,
 				66C744972B7F539800C86788 /* MovieCollectionViewCell.swift */,
+				6647FDF22CB015010006DF58 /* CategoryButtonCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -607,6 +616,8 @@
 				66C006AA2B63BF010056830B /* HomeViewModel.swift in Sources */,
 				664422382B861A95000193DB /* FavoriteViewModelContracts.swift in Sources */,
 				66C006962B63A9D80056830B /* SearchViewController.swift in Sources */,
+				6647FDEF2CAFE0420006DF58 /* HomeTableViewHeader.swift in Sources */,
+				6647FDF12CAFF0730006DF58 /* HomeTitleView.swift in Sources */,
 				66C3EFB42B763538005F57B7 /* CarouselCell.swift in Sources */,
 				66EB5D7D2B655554001ADD72 /* MovieStore.swift in Sources */,
 				661853E32B7D8020005E0976 /* EmptyStateView.swift in Sources */,
@@ -624,6 +635,7 @@
 				6644222E2B85E94D000193DB /* HomeViewModelContracts.swift in Sources */,
 				6694A3622B74D3AF00870B22 /* MovieImagesModel.swift in Sources */,
 				664422362B860BC9000193DB /* SeeAllViewModelContracts.swift in Sources */,
+				6647FDF32CB015010006DF58 /* CategoryButtonCell.swift in Sources */,
 				662EED852B77893B00470192 /* AlertVC.swift in Sources */,
 				6647FDDB2CAED5660006DF58 /* UINavigationBar+Ext.swift in Sources */,
 				662EED8A2B77899400470192 /* BodyLabel.swift in Sources */,
