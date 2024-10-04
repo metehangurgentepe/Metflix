@@ -23,6 +23,7 @@ class SearchViewModel: SearchViewModelProtocol{
         }
     }
     
+    @MainActor
     func search(filter: String) async{
         self.delegate?.handleOutput(.setLoading(true))
         do{

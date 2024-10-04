@@ -10,22 +10,13 @@ import UIKit
 class SeeAllCell: UICollectionViewCell {
     static let identifier = "SeeAllCell"
     
-    let imageView: UIImageView = {
+    lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = SFSymbols.question
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 8
         return imageView
-    }()
-    
-    let nameLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .left
-        label.textColor = .label
-        label.font = .preferredFont(forTextStyle: .headline).withSize(14)
-        label.lineBreakMode = .byTruncatingTail
-        return label
     }()
     
     
@@ -41,28 +32,19 @@ class SeeAllCell: UICollectionViewCell {
     
     
     func set(movie: Movie) {
-        nameLabel.text = movie.title
-        imageView.sd_setImage(with: movie.posterURL)
+        let lowResPosterURL = movie.posterURL.absoluteString.replacingOccurrences(of: "w780", with: "w300")
+        imageView.sd_setImage(with: URL(string: lowResPosterURL), placeholderImage: nil, options: .continueInBackground, context: nil)
     }
     
     
     private func setupUI() {
         addSubview(imageView)
-        addSubview(nameLabel)
         
         imageView.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-20)
+            make.bottom.equalToSuperview()
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
-        }
-        
-        nameLabel.snp.makeConstraints { make in
-            make.top.equalTo(imageView.snp.bottom).offset(5)
-            make.leading.equalToSuperview()
-            make.trailing.equalToSuperview()
-            make.height.equalTo(20)
-//            make.width.equalTo(150)
         }
     }
     

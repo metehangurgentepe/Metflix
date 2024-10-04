@@ -7,38 +7,89 @@
 
 import UIKit
 
-class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate {
+class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate, UITextFieldDelegate {
+    
+    enum Section {
+        case main
+    }
+    
     var suggestedMovies: [Movie] = []
+    var filteredMovies: [Movie] = []
     
     let tableView = UITableView(frame: .zero, style: .grouped)
     
-    let searchBar = UISearchBar(frame: .zero)
-    let backButton: UIButton = {
+    private lazy var backButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
         button.tintColor = .white
         return button
     }()
     
-    let activity = UIActivityIndicatorView(style: .medium)
+    private lazy var searchBar: UISearchBar = {
+        let sb = UISearchBar()
+        sb.tintColor = .white
+        sb.placeholder = "Oyun, dizi veya film arayın."
+        sb.layer.cornerRadius = 2
+        return sb
+    }()
     
+    var collectionView: UICollectionView!
+    var dataSource: UICollectionViewDiffableDataSource<Section, Movie>!
+    let activity = UIActivityIndicatorView(style: .medium)
     let viewModel = SearchViewModel()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        viewModel.delegate = self
+        Task{ await viewModel.load() }
+        
         view.backgroundColor = .systemBackground
         configureNavBar()
         configureLoading()
         configureTableView()
-        
-        viewModel.delegate = self
-        Task{ await viewModel.load() }
+        configureCollectionView()
+        configureDataSource()
     }
+    
+    func updatedData(on movies: [Movie]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Movie>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(movies)
+        DispatchQueue.main.async{
+            self.dataSource.apply(snapshot,animatingDifferences: true)
+        }
+    }
+    
+    func configureDataSource() {
+        dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, follower in
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SeeAllCell.identifier, for: indexPath) as! SeeAllCell
+            let movie = self.filteredMovies[indexPath.row]
+            cell.set(movie: movie)
+            return cell
+        })
+    }
+    
+    func configureCollectionView() {
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: UIHelper.createThreeColumntFlowLayout(in: view))
+        view.addSubview(collectionView)
+        collectionView.delegate = self
+        collectionView.backgroundColor = .systemBackground
+        collectionView.register(SeeAllCell.self, forCellWithReuseIdentifier: SeeAllCell.identifier)
+        
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(40)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+    }
+    
     
     private func configureNavBar() {
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-
+        
         searchBar.delegate = self
+        searchBar.searchTextField.delegate = self
         searchBar.tintColor = .white
         searchBar.searchTextField.leftView?.tintColor = .lightGray
         searchBar.placeholder = "Oyun, dizi veya film arayın."
@@ -81,7 +132,7 @@ class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate {
             make.center.equalToSuperview()
         }
     }
-
+    
     private func configureTableView() {
         tableView.register(SuggestedMovieCell.self, forCellReuseIdentifier: SuggestedMovieCell.identifier)
         tableView.register(HorizontalMobileTableViewCell.self, forCellReuseIdentifier: HorizontalMobileTableViewCell.identifier)
@@ -107,15 +158,30 @@ class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate {
     }
 }
 
+extension SuggestedSearchViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let movieId = filteredMovies[indexPath.row].id
+        viewModel.delegate?.handleOutput(.selectMovie(movieId))
+    }
+}
+
 extension SuggestedSearchViewController: SearchViewModelDelegate {
     func handleOutput(_ output: SearchViewModelOutput) {
         DispatchQueue.main.async {
             switch output {
-            case .getMoviesBySearch(let array):
-                break
+            case .getMoviesBySearch(let movies):
+                self.filteredMovies = movies
+                self.updatedData(on: movies)
+                
+                self.collectionView.isHidden = false
+                self.tableView.isHidden = true
+                
             case .loadMovies(let array):
                 self.suggestedMovies = array
                 self.tableView.reloadData()
+                
+                self.collectionView.isHidden = true
+                self.tableView.isHidden = false
                 
             case .setLoading(let isLoading):
                 if isLoading{
@@ -128,17 +194,41 @@ extension SuggestedSearchViewController: SearchViewModelDelegate {
                 }
             case .selectMovie(let int):
                 break
+                
             case .error(let movieError):
                 break
+                //                presentAlertOnMainThread(title: "Error", message: error.localizedDescription, buttonTitle: "Ok")
             }
         }
     }
 }
 
-extension SuggestedSearchViewController: UISearchBarDelegate {
+extension SuggestedSearchViewController: UISearchBarDelegate, UISearchResultsUpdating {
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        let filter = searchBar.text ?? ""
+        
+        if filter.isEmpty {
+            tableView.isHidden = false
+            collectionView.isHidden = true
+        } else {
+            Task{
+                await viewModel.search(filter: filter)
+            }
+        }
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        let filter = searchController.searchBar.text ?? ""
+        if filter.isEmpty {
+            Task{
+                await viewModel.load()
+            }
+        } else {
+            Task{
+                await viewModel.search(filter: filter)
+            }
+        }
     }
 }
 
