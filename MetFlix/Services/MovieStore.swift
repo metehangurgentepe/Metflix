@@ -58,6 +58,13 @@ class MovieStore: MovieService {
         return try await self.loadURLAndDecode(url: url)
     }
     
+    func fetchMovieCredits(id: Int) async throws -> MovieCredit {
+        guard let url = URL(string: "\(baseAPIURL)/movie/\(id)/credits") else {
+            throw MovieError.invalidEndpoint
+        }
+        return try await self.loadURLAndDecode(url: url)
+    }
+    
     
     func searchMovie(query: String) async throws -> MovieResponse{
         guard let url = URL(string: "\(baseAPIURL)/search/movie") else {

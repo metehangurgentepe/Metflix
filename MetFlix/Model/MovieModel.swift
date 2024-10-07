@@ -51,7 +51,7 @@ struct Movie: Codable, Identifiable, Hashable {
     let homepage: String?
 
     let genres: [MovieGenre]?
-    let credits: MovieCredit?
+    var credits: MovieCredit?
     let videos: MovieVideoResponse?
 
     static private let yearFormatter: DateFormatter = {

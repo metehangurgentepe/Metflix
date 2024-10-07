@@ -43,23 +43,23 @@ class NewAndPopularHeader: UITableViewHeaderFooterView {
     }
     
     private func configure() {
-        contentView.addSubview(stackView) // Header view'in içine değil, contentView'e eklemeliyiz.
+        contentView.addSubview(stackView)
         
         stackView.addArrangedSubview(imageView)
         stackView.addArrangedSubview(titleLabel)
         
-        stackView.spacing = 8 // Görsel ve başlık arasında boşluk
-        stackView.alignment = .center // Elemanları dikeyde ortalar
+        stackView.spacing = 8
+        stackView.alignment = .center
         stackView.axis = .horizontal
         
         stackView.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview().inset(8) // Üst ve alt boşluklar
-            make.leading.equalToSuperview().offset(16) // Sol boşluk
-            make.trailing.equalToSuperview().offset(-16) // Sağ boşluk
+            make.top.bottom.equalToSuperview().inset(8)
+            make.leading.equalToSuperview().offset(16)
+            make.trailing.equalToSuperview().offset(-16)
         }
         
         imageView.snp.makeConstraints { make in
-            make.width.height.equalTo(24) // Görüntü boyutu
+            make.width.height.equalTo(24) 
         }
     }
 }

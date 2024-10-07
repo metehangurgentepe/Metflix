@@ -11,48 +11,55 @@ class MovieInfoView: UIView {
     
     let dateLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .secondaryLabel
+        label.textColor = .white
         label.text = "2012"
+        label.font = .systemFont(ofSize: 14)
         return label
     }()
     
     let runtimeLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .secondaryLabel
+        label.textColor = .white
         label.text = "120"
+        label.font = .systemFont(ofSize: 14)
         return label
     }()
     
-    let genreLabel: UILabel = {
+    let nameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .secondaryLabel
+        label.textColor = .white
+        label.font = .preferredFont(forTextStyle: .headline).withSize(20)
         return label
     }()
     
-    let imageView: UIImageView = {
-        let imageview = UIImageView()
-        imageview.image = SFSymbols.lane
-        return imageview
-    }()
-    
-    let imageView2: UIImageView = {
-        let imageview = UIImageView()
-        imageview.image = SFSymbols.lane
-        return imageview
-    }()
-    
-    let verticalLine: UIView = {
+    let ageView: UIView = {
         let view = UIView()
-        view.backgroundColor = .secondaryLabel
-        view.frame.size = CGSize(width: 3, height: 50)
+        view.backgroundColor = .systemGray
+        view.layer.cornerRadius = 4
+        
+        let label = UILabel()
+        label.text = "18+"
+        label.textColor = .white
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 8)
+        
+        view.addSubview(label)
+        
+        label.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.height.equalTo(12)
+        }
+        
         return view
     }()
     
-    let verticalLine2: UIView = {
-        let view = UIView()
-        view.backgroundColor = .secondaryLabel
-        view.frame.size = CGSize(width: 3, height: 50)
-        return view
+    var hStackView: UIStackView = {
+        let sv = UIStackView()
+        sv.axis = .horizontal
+        sv.spacing = 20
+        sv.distribution = .fillProportionally
+        return sv
     }()
     
     override init(frame: CGRect) {
@@ -65,39 +72,33 @@ class MovieInfoView: UIView {
     }
     
     
-    func set(movie:Movie) {
+    func set(movie: Movie) {
         print(movie)
         dateLabel.text = movie.yearText
         runtimeLabel.text = movie.runtime!.description + " min"
-        genreLabel.text = movie.genres?.first?.name ?? ""
+        nameLabel.text = movie.title
     }
     
     private func configure() {
-        let line = verticalLine
+        addSubview(nameLabel)
+        addSubview(hStackView)
         
-        line.snp.makeConstraints { make in
-            make.width.equalTo(3)
-            make.height.equalTo(50)
+        hStackView.addArrangedSubview(dateLabel)
+        hStackView.addArrangedSubview(ageView)
+        hStackView.addArrangedSubview(runtimeLabel)
+        
+        nameLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.height.equalTo(20)
+            make.top.equalToSuperview()
         }
         
-        let line2 = verticalLine2
-        
-        line2.snp.makeConstraints { make in
-            make.width.equalTo(3)
-            make.height.equalTo(50)
-        }
-        
-        let horizontalStackView = UIStackView(arrangedSubviews: [dateLabel, line, runtimeLabel, line2, genreLabel])
-        horizontalStackView.axis = .horizontal
-        horizontalStackView.alignment = .center
-        horizontalStackView.spacing = 10
-        
-        
-        addSubview(horizontalStackView)
-        
-        horizontalStackView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.centerX.equalToSuperview()
+        hStackView.snp.makeConstraints { make in
+            make.leading.equalToSuperview()
+            make.top.equalTo(nameLabel.snp.bottom).offset(2)
+            make.width.lessThanOrEqualTo(150)
+            make.height.equalTo(20)
         }
     }
 }

@@ -41,7 +41,7 @@ class VerticalButton: UIButton {
     private func setupButton() {
         titleLabel?.font = .systemFont(ofSize: 8)
         titleLabel?.textColor = .label
-        imageView?.contentMode = .scaleAspectFit
+        imageView?.contentMode = .scaleAspectFill
         self.tintColor = .white
     }
     
@@ -54,8 +54,7 @@ class VerticalButton: UIButton {
         let titleHeight = titleLabel.frame.size.height
         
         let totalHeight = imageHeight + titleHeight + 4
-        imageView.center = CGPoint(x: bounds.width / 2, y: (bounds.height - titleHeight) / 2 - 4)
-        titleLabel.center = CGPoint(x: bounds.width / 2, y: (bounds.height + imageHeight) / 2 + 4)
-        
+        imageView.center = CGPoint(x: bounds.width / 2, y: bounds.height / 2 - (titleHeight + 4) / 2)
+        titleLabel.center = CGPoint(x: bounds.width / 2, y: bounds.height / 2 + (imageHeight + 4) / 2)
     }
 }

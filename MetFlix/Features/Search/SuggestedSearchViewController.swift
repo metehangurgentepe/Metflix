@@ -30,6 +30,7 @@ class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate, U
         sb.tintColor = .white
         sb.placeholder = "Oyun, dizi veya film arayın."
         sb.layer.cornerRadius = 2
+        sb.backgroundImage = UIImage()
         return sb
     }()
     
@@ -52,6 +53,18 @@ class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate, U
         configureTableView()
         configureCollectionView()
         configureDataSource()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+        tabBarController?.tabBar.isHidden = true
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     func updatedData(on movies: [Movie]) {
@@ -80,7 +93,7 @@ class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate, U
         collectionView.register(SeeAllCell.self, forCellWithReuseIdentifier: SeeAllCell.identifier)
         
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(40)
+            make.top.equalTo(searchBar.snp.bottom).offset(6)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
         }
@@ -115,7 +128,7 @@ class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate, U
         stackView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(30)
+            make.height.equalTo(40)
         }
     }
     
@@ -149,9 +162,16 @@ class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate, U
         view.addSubview(tableView)
         
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom)
+            make.top.equalTo(searchBar.snp.bottom).offset(6)
             make.trailing.leading.equalToSuperview()
             make.bottom.equalToSuperview()
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // keyboard closed
+        if scrollView.contentOffset.y > 0 {
+            searchBar.resignFirstResponder()
         }
     }
     

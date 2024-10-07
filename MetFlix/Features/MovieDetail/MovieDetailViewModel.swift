@@ -25,6 +25,7 @@ final class MovieDetailViewModel: MovieDetailViewModelProtocol{
         Task{
             do{
                 self.movie = try await MovieStore.shared.fetchMovieDetail(id: id)
+                self.movie?.credits = try await MovieStore.shared.fetchMovieCredits(id: id)
                 self.delegate?.handleOutput(.getDetail(self.movie!))
                 downloadImage()
             } catch {

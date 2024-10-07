@@ -141,7 +141,7 @@ class NewsAndPopularTableViewCell: UITableViewCell {
         
         buttonStackView.snp.makeConstraints { make in
             make.top.equalTo(thumbnailImageView.snp.bottom).offset(4)
-            make.leading.equalTo(titleLabel.snp.trailing).offset(0)
+            make.leading.equalTo(titleLabel.snp.trailing).offset(10)
             make.trailing.equalToSuperview()
             make.height.equalTo(50)
         }
@@ -167,8 +167,6 @@ class NewsAndPopularTableViewCell: UITableViewCell {
             make.height.equalTo(20)
         }
     }
-    
-    
     
     func configure(movie: Movie?, index: Int?, wide: Bool, upcoming: Bool, series: Series?) {
         buttonStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
@@ -199,7 +197,7 @@ class NewsAndPopularTableViewCell: UITableViewCell {
         buttonStackView.addArrangedSubview(remindMeButton)
         buttonStackView.addArrangedSubview(infoButton)
         
-        buttonStackView.spacing = 4
+        buttonStackView.spacing = 0
         buttonStackView.distribution = .fillEqually
         
         dateLabel.attributedText = getReleaseDate(date: movie.releaseDate ?? "")
@@ -221,7 +219,7 @@ class NewsAndPopularTableViewCell: UITableViewCell {
             make.width.equalTo(ScreenSize.width - 120).multipliedBy(0.5)
         }
         
-        buttonStackView.spacing = 1
+        buttonStackView.spacing = 0
         buttonStackView.distribution = .fillEqually
         
         if wide {
@@ -253,7 +251,7 @@ class NewsAndPopularTableViewCell: UITableViewCell {
         buttonStackView.addArrangedSubview(addListButton)
         buttonStackView.addArrangedSubview(playButton)
         
-        buttonStackView.spacing = 1
+        buttonStackView.spacing = 0
         buttonStackView.distribution = .fillEqually
         
         titleLabel.text = series.name
@@ -261,8 +259,6 @@ class NewsAndPopularTableViewCell: UITableViewCell {
         overviewLabel.text = series.overview
         productTitleLabel.text = series.originalName
     }
-
-    
     
     func getReleaseDate(date: String) -> NSMutableAttributedString {
         let dateFormatter = DateFormatter()

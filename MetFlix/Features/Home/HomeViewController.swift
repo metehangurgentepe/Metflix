@@ -67,6 +67,11 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDe
         configureNavBar()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
     func setupHeaderView() {
         guard let popularMovies = popularMovies, !popularMovies.results.isEmpty else {
             return

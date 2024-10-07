@@ -13,7 +13,25 @@ protocol SelectCategoryDelegate: AnyObject {
 class SelectCategoryVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     let tableView = UITableView()
-    let categories = ["Category 1", "Category 2", "Category 3"]
+    let categories = [
+        "My List",
+        "Downloadable Contents",
+        "Drama",
+        "Comedy",
+        "Action",
+        "Thriller",
+        "Sci-Fi",
+        "Fantasy",
+        "Documentary",
+        "Horror",
+        "Mystery",
+        "Reality",
+        "Animated",
+        "Romance",
+        "Family",
+        "Adventure",
+        "Superhero"
+    ]
     let xButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "xmark"), for: .normal)
@@ -53,6 +71,8 @@ class SelectCategoryVC: UIViewController, UITableViewDelegate, UITableViewDataSo
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.separatorStyle = .none
         
+        tableView.contentInset = UIEdgeInsets(top: 100, left: 0, bottom: 100, right: 0)
+        
         view.addSubview(tableView)
         
         NSLayoutConstraint.activate([
@@ -76,6 +96,7 @@ class SelectCategoryVC: UIViewController, UITableViewDelegate, UITableViewDataSo
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = categories[indexPath.row]
+        cell.textLabel?.textColor = .gray
         cell.backgroundColor = .clear
         return cell
     }

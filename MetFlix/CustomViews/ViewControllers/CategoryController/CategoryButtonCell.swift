@@ -72,10 +72,9 @@ class CategoryButtonCell: UICollectionViewCell {
         
         iconImageView.tintColor = isSelected ? .black : .white
         iconImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(16)  // Set size for the icon
+            make.width.height.equalTo(16) 
         }
         
-        // Style the label
         label.backgroundColor = isSelected ? .white : .black
     }
 }

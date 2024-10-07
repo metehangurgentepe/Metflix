@@ -54,7 +54,10 @@ class NewAndPopularVC: UIViewController, MenuControllerDelegate {
         Task{
             await viewModel.load()
         }
-        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        self.tabBarController?.tabBar.isHidden = false
     }
     
     private func setupCategory() {
@@ -118,6 +121,7 @@ class NewAndPopularVC: UIViewController, MenuControllerDelegate {
     
     @objc private func buttonTapped(_ sender: UIButton) {
         let vc = SuggestedSearchViewController()
+        vc.modalPresentationStyle = .overFullScreen
         hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(vc, animated: false)
     }
