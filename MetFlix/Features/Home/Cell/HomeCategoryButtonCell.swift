@@ -8,10 +8,7 @@
 import Foundation
 import UIKit
 
-
-
 class CategoryCollectionViewCell: UICollectionViewCell {
-    
     static let identifier = "CategoryCollectionViewCell"
     
     let categoryLabel: UILabel = {
@@ -24,7 +21,8 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     
     override var isSelected: Bool {
         didSet {
-            contentView.backgroundColor = isSelected ? .lightGray.withAlphaComponent(0.2) : .clear
+            contentView.backgroundColor = isSelected ? .lightGray.withAlphaComponent(0.5) : .clear
+            categoryLabel.textColor = isSelected ? .white : .gray
         }
     }
     
@@ -32,14 +30,14 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         contentView.addSubview(categoryLabel)
         contentView.backgroundColor = .clear
-        contentView.layer.cornerRadius = 12
+        contentView.layer.cornerRadius = 15
         contentView.layer.masksToBounds = true
         
         contentView.layer.borderColor = UIColor.lightGray.cgColor
         contentView.layer.borderWidth = 1
         
         categoryLabel.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(2)
+            make.edges.equalToSuperview().inset(4)
         }
     }
     
@@ -47,7 +45,8 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with title: String) {
+    func configure(with title: String, isSelected: Bool) {
+        self.isSelected = isSelected
         categoryLabel.text = title
     }
 }

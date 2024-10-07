@@ -13,11 +13,8 @@ protocol HomeVCCarouselDelegate: AnyObject {
     func didSelectMovie(movieId: Int)
 }
 
-class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDelegate {
-    private let topContentInset: CGFloat = UIScreen.main.bounds.size.height < 568 ? 30 : 50
-    private let collectionViewHeightReduction: CGFloat = UIScreen.main.bounds.size.height < 568 ? 20 : 30
-    
-    let categories = ["TV Shows", "Movies", "Categories"]
+class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDelegate, SelectCategoryDelegate {
+    var isCollectionViewVisible = true
     
     enum Section: Int, CaseIterable {
         case nowPlaying = 0
@@ -29,39 +26,30 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDe
             return Section.allCases.count
         }
     }
-    
-    let scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.isScrollEnabled = true
-        return scrollView
-    }()
-    
+    let header = Header(reuseIdentifier: "CollectionTableViewCell")
     let contentView = UIView()
-    
     var tableView = UITableView(frame: .zero, style: .grouped)
+    let titleView = HomeTitleView(frame: .zero)
+    let visualEffectView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+        let visualEffectView = UIVisualEffectView(effect: blurEffect)
+        return visualEffectView
+    }()
     
     var nowPlayingMovies: MovieResponse?
     var popularMovies: MovieResponse?
     var upcomingMovies: MovieResponse?
     var topRatedMovies: MovieResponse?
     
-    let header = Header(reuseIdentifier: "CollectionTableViewCell")
-    
     let padding: Int = -15
     let anotherPadding: Int = 10
+    private var titleViewHeightConstraint: Constraint?
+    private let topContentInset: CGFloat = UIScreen.main.bounds.size.height < 568 ? 30 : 50
+    private let collectionViewHeightReduction: CGFloat = UIScreen.main.bounds.size.height < 568 ? 20 : 30
+    var previousOffsetY: CGFloat = 0
     
     weak var delegate: HomeVCCarouselDelegate?
     lazy var viewModel = HomeViewModel()
-    var isCollectionViewVisible = true
-    let titleView = HomeTitleView(frame: .zero)
-    private var titleViewHeightConstraint: Constraint?
-
-    
-    let visualEffectView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterial)
-        let visualEffectView = UIVisualEffectView(effect: blurEffect)
-        return visualEffectView
-    }()
     
     
     override func viewDidLoad() {
@@ -100,6 +88,8 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDe
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         
+        let deltaY = offsetY - previousOffsetY
+        
         if offsetY < -60 {
             visualEffectView.isHidden = true
         } else {
@@ -108,15 +98,19 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDe
         
         let titleViewHeight: CGFloat = 80 + UIApplication.shared.statusBarFrame.height
         
-        if offsetY > titleViewHeight && isCollectionViewVisible {
-            titleView.hideCollectionView()
-            isCollectionViewVisible = false
-            titleViewHeightConstraint?.update(offset: titleViewHeight - collectionViewHeightReduction)
-        } else if offsetY < titleViewHeight && !isCollectionViewVisible {
+        if deltaY < 0 && !isCollectionViewVisible {
             titleView.showCollectionView()
             isCollectionViewVisible = true
             titleViewHeightConstraint?.update(offset: titleViewHeight)
         }
+        
+        if deltaY > 0 && offsetY > titleViewHeight && isCollectionViewVisible {
+            titleView.hideCollectionView()
+            isCollectionViewVisible = false
+            titleViewHeightConstraint?.update(offset: titleViewHeight - collectionViewHeightReduction)
+        }
+        
+        previousOffsetY = offsetY
     }
     
     func configureTableView() {
@@ -180,6 +174,37 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDe
         let vc = SuggestedSearchViewController()
         vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: false)
+    }
+    
+    func navigateSelectCategoryVC() {
+        let selectCategoryVC = SelectCategoryVC()
+        selectCategoryVC.delegate = self
+        
+        selectCategoryVC.modalPresentationStyle = .overCurrentContext
+        self.tabBarController?.tabBar.isHidden = true
+        
+        self.present(selectCategoryVC, animated: true, completion: nil)
+        setBlurView()
+    }
+    
+    func setBlurView() {
+        let blurView = UIVisualEffectView()
+        
+        blurView.frame = view.frame
+        
+        blurView.effect = UIBlurEffect(style: .regular)
+        
+        view.addSubview(blurView)
+    }
+    
+    func removeBlurView() {
+        for subview in view.subviews {
+            if subview.isKind(of: UIVisualEffectView.self) {
+                subview.removeFromSuperview()
+            }
+        }
+        
+        self.tabBarController?.tabBar.isHidden = false
     }
 }
 
@@ -297,27 +322,5 @@ extension HomeViewController: MovieListViewModelDelegate {
                 navigationController?.pushViewController(destVC, animated: true)
             }
         }
-    }
-}
-
-extension HomeViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return categories.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as! CategoryCollectionViewCell
-        cell.configure(with: categories[indexPath.row])
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Selected: \(categories[indexPath.row])")
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let category = categories[indexPath.row]
-        let width = category.size(withAttributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .medium)]).width + 32
-        return CGSize(width: width, height: 24)
     }
 }

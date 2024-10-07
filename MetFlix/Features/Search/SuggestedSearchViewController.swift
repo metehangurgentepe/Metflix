@@ -41,6 +41,8 @@ class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate, U
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.hidesBackButton = true
+        
         viewModel.delegate = self
         Task{ await viewModel.load() }
         

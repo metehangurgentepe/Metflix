@@ -9,11 +9,12 @@ import SnapKit
 
 protocol HomeTitleViewDelegate: AnyObject {
     func navigateSearch()
+    func navigateSelectCategoryVC()
 }
 
 class HomeTitleView: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    let categories = ["TV Shows", "Movies", "Categories"]
+    let categories = ["Series", "Movies", "Categories"]
     
     var backgroundView: UIView? {
         didSet {
@@ -73,20 +74,25 @@ class HomeTitleView: UIView, UICollectionViewDelegate, UICollectionViewDataSourc
     }()
     
     lazy var collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = AnimatedCollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 10
-        layout.itemSize = CGSize(width: 120, height: 40)
+        layout.itemSize = CGSize(width: 120, height: 30)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.identifier)
+        collectionView.register(XButtonCollectionViewCell.self, forCellWithReuseIdentifier: XButtonCollectionViewCell.identifier)
+        collectionView.register(AllCategoriesCollectionViewCell.self, forCellWithReuseIdentifier: AllCategoriesCollectionViewCell.identifier)
         collectionView.backgroundColor = .clear
         return collectionView
     }()
     
     private var collectionViewHeightConstraint: Constraint?
+    
+    var selectedIndexPath: IndexPath?
+    var isSpecialViewVisible: Bool = false
     
     weak var delegate: HomeTitleViewDelegate?
     
@@ -159,23 +165,113 @@ class HomeTitleView: UIView, UICollectionViewDelegate, UICollectionViewDataSourc
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return categories.count
+        return selectedIndexPath != nil ? 3 : categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as! CategoryCollectionViewCell
-        cell.configure(with: categories[indexPath.row])
-        return cell
+        if let selectedIndexPath = selectedIndexPath {
+            switch indexPath.item {
+            case 0:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: XButtonCollectionViewCell.identifier, for: indexPath) as! XButtonCollectionViewCell
+                return cell
+            case 1:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as! CategoryCollectionViewCell
+                cell.configure(with: categories[selectedIndexPath.item],isSelected: true)
+                return cell
+            case 2:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AllCategoriesCollectionViewCell.identifier, for: indexPath) as! AllCategoriesCollectionViewCell
+                return cell
+            default:
+                fatalError("Unexpected indexPath")
+            }
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as! CategoryCollectionViewCell
+            cell.configure(with: categories[indexPath.row],isSelected: false)
+            return cell
+        }
     }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        selectedIndexPath = nil
+        collectionView.reloadData()
+    }
+    
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Selected: \(categories[indexPath.row])")
+        if selectedIndexPath == nil {
+            if indexPath.item != 2 {
+                selectedIndexPath = indexPath
+                collectionView.performBatchUpdates({
+                    collectionView.reloadSections(IndexSet(integer: 0))
+                }, completion: { _ in
+                    if let selectedCell = collectionView.cellForItem(at: IndexPath(item: 1, section: 0)) as? CategoryCollectionViewCell {
+                        selectedCell.isSelected = true
+                    }
+                })
+            } else {
+                self.delegate?.navigateSelectCategoryVC()
+            }
+        } else {
+            if indexPath.item == 0 {
+                selectedIndexPath = nil
+                collectionView.performBatchUpdates({
+                    collectionView.reloadSections(IndexSet(integer: 0))
+                }, completion: nil)
+            } else if indexPath.item == 2 {
+                self.delegate?.navigateSelectCategoryVC()
+            }
+        }
     }
     
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let category = categories[indexPath.row]
-        let width = category.size(withAttributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .medium)]).width + 32
-        return CGSize(width: width, height: 24)
+        if selectedIndexPath != nil {
+            switch indexPath.item {
+            case 0:
+                return CGSize(width: 30, height: 30)
+                
+            case 1:
+                let category = categories[selectedIndexPath!.item]
+                let width = category.size(withAttributes: [.font: UIFont.systemFont(ofSize: 14, weight: .medium)]).width + 32
+                return CGSize(width: width, height: 30)
+                
+            case 2:
+                return CGSize(width: 140, height: 30)
+                
+            default:
+                return .zero
+            }
+        } else {
+            let category = categories[indexPath.item]
+            let width = category.size(withAttributes: [.font: UIFont.systemFont(ofSize: 14, weight: .medium)]).width + 32
+            return CGSize(width: width, height: 30)
+        }
     }
+    
 }
 
+
+class AnimatedCollectionViewFlowLayout: UICollectionViewFlowLayout {
+    override func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        let attributes = super.initialLayoutAttributesForAppearingItem(at: itemIndexPath)
+        
+        if itemIndexPath.item == 0 {
+            attributes?.alpha = 0.0
+            attributes?.transform = CGAffineTransform(translationX: -30, y: 0)
+        }
+        
+        return attributes
+    }
+    
+    override func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        let attributes = super.finalLayoutAttributesForDisappearingItem(at: itemIndexPath)
+        
+        if itemIndexPath.item == 0 {
+            attributes?.alpha = 0.0
+            attributes?.transform = CGAffineTransform(translationX: -30, y: 0)
+        }
+        
+        return attributes
+    }
+}

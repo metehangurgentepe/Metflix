@@ -76,10 +76,8 @@ class NewAndPopularVC: UIViewController, MenuControllerDelegate {
     func didTapMenuItem(indexPath: IndexPath) {
         tableView.layoutIfNeeded()
         
-        // Geçerli section'ın ilk satırına kaydır
         let indexPath = IndexPath(row: 0, section: indexPath.item)
         
-        // Satırın geçerli olup olmadığını kontrol et
         if tableView.numberOfRows(inSection: indexPath.section) > 0 {
             tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
         } else {
@@ -97,18 +95,31 @@ class NewAndPopularVC: UIViewController, MenuControllerDelegate {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: title)
         
-        let shareButton = UIBarButtonItem(image: UIImage(systemName: "shareplay"), style: .plain, target: self, action: nil)
-        let downloadButton = UIBarButtonItem(image: UIImage(systemName: "arrow.down.to.line"), style: .plain, target: self, action: nil)
-        let searchButton = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: nil)
-        shareButton.tintColor = .white
-        downloadButton.tintColor = .white
-        searchButton.tintColor = .white
+        let shareButton = createCustomButton(imageName: "shareplay")
+        let downloadButton = createCustomButton(imageName: "arrow.down.to.line")
+        let searchButton = createCustomButton(imageName: "magnifyingglass")
         
         navigationItem.rightBarButtonItems = [
             searchButton,
             downloadButton,
             shareButton
         ]
+    }
+    
+    private func createCustomButton(imageName: String) -> UIBarButtonItem {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: imageName), for: .normal)
+        button.tintColor = .white
+        button.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+        button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+        
+        return UIBarButtonItem(customView: button)
+    }
+    
+    @objc private func buttonTapped(_ sender: UIButton) {
+        let vc = SuggestedSearchViewController()
+        hidesBottomBarWhenPushed = true
+        self.navigationController?.pushViewController(vc, animated: false)
     }
     
     private func setupTableView() {
