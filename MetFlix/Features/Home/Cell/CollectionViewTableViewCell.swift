@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CollectionViewTableViewCell: UITableViewCell {
+class CollectionViewTableViewCell: UITableViewCell, UICollectionViewDelegateFlowLayout {
     
     static let identifier = "CollectionTableViewCell"
     
@@ -17,6 +17,8 @@ class CollectionViewTableViewCell: UITableViewCell {
     private var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
     
     weak var delegate: HomeVCCarouselDelegate?
+    
+    var isTopRated: Bool = false
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -45,6 +47,7 @@ class CollectionViewTableViewCell: UITableViewCell {
         layout.minimumLineSpacing = 10
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(MovieCollectionViewCell.self, forCellWithReuseIdentifier: MovieCollectionViewCell.identifier)
+        collectionView.register(TopRatedCollectionViewCell.self, forCellWithReuseIdentifier: TopRatedCollectionViewCell.identifier)
         collectionView.delegate = self
         collectionView.dataSource = self
         contentView.addSubview(collectionView)
@@ -76,10 +79,17 @@ extension CollectionViewTableViewCell: UICollectionViewDataSource, UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.identifier, for: indexPath) as! MovieCollectionViewCell
-        let model = movieArr[indexPath.row]
-        cell.configure(movie: model)
-        return cell
+        if isTopRated {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TopRatedCollectionViewCell.identifier, for: indexPath) as! TopRatedCollectionViewCell
+            let model = movieArr[indexPath.row]
+            cell.configure(movie: model, rank: indexPath.row + 1)
+            return cell
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.identifier, for: indexPath) as! MovieCollectionViewCell
+            let model = movieArr[indexPath.row]
+            cell.configure(movie: model)
+            return cell
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -87,4 +97,13 @@ extension CollectionViewTableViewCell: UICollectionViewDataSource, UICollectionV
         delegate?.didSelectMovie(movieId: movieId)
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if isTopRated {
+            let height = 1170 / 200
+            return .init(width: 850 / height, height: 225)
+        } else {
+            let height = 1170 / 200
+            return .init(width: 780 / height, height: 225)
+        }
+    }
 }

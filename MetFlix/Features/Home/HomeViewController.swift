@@ -265,6 +265,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         case Section.topRated.rawValue:
             if let movies = topRatedMovies?.results {
                 cell.configure(movies: movies, delegate: self)
+                cell.isTopRated = true
             }
         case Section.upcoming.rawValue:
             if let movies = upcomingMovies?.results {
