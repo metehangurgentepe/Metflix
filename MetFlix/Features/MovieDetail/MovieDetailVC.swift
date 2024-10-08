@@ -8,7 +8,16 @@
 import Foundation
 import UIKit
 
+protocol MovieDetailControllerDelegate: AnyObject {
+    func dismissBlurView()
+}
+
 class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDelegate {
+    
+    enum Section {
+        case main
+    }
+    
     var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 12
@@ -34,14 +43,6 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
     
     let scrollView = UIScrollView()
     let contentView = UIView()
-    
-    lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        collectionView.register(SimilarMovieCell.self, forCellWithReuseIdentifier: SimilarMovieCell.identifier)
-        collectionView.showsHorizontalScrollIndicator = false
-        return collectionView
-    }()
-    
     let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -105,27 +106,61 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         return label
     }()
     
+    let xButton: UIButton = {
+        let button = UIButton()
+        let image = UIImage(systemName: "xmark")
+        button.setImage(image, for: .normal)
+        button.tintColor = .white
+        button.layer.cornerRadius = 13
+        button.backgroundColor = .black
+        return button
+    }()
+    
+    let shareButton: UIButton = {
+        let button = UIButton()
+        let image = UIImage(systemName: "shareplay")
+        button.setImage(image, for: .normal)
+        button.tintColor = .white
+        button.backgroundColor = .black
+        button.layer.cornerRadius = 13
+        return button
+    }()
+    
     let listButton = VerticalButton(frame: .zero)
     let givePointButton = VerticalButton(frame: .zero)
     let recommendButton = VerticalButton(frame: .zero)
-    let menuController = MenuDetailController(collectionViewLayout: UICollectionViewFlowLayout())    
+    let menuController = MenuDetailController(collectionViewLayout: UICollectionViewFlowLayout())
     let horizontalButtonStackView = UIStackView()
+    var dataSource: UICollectionViewDiffableDataSource<Section, Movie>!
+    var collectionView: UICollectionView!
     
     var movieId: Int!
     var movie: Movie?
     var similarMovies = [Movie]()
+    var showMovies = [Movie]()
+    var recommendedMovies: [Movie] = []
     var viewModel: MovieDetailViewModel?
+    weak var delegate: MovieDetailControllerDelegate?
+    
+    private var originalCenter: CGPoint = .zero
+    private let threshold: CGFloat = 100
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureViewController()
+        
+        tabBarController?.tabBar.isHidden = true
         
         viewModel?.delegate = self
-        viewModel?.load()
-        viewModel?.getSimilarMovies()
-        setupMenuController()
+        Task{
+            await viewModel?.load()
+            await viewModel?.getSimilarMovies()
+            await viewModel?.getRecommendedMovies()
+        }
         
+        configureViewController()
+        setupMenuController()
         configureImageView()
+        configureXButton()
         configureScrollView()
         configureStackView()
         configureMovieInfoView()
@@ -136,12 +171,17 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         configureMenuController()
         configureCollectionView()
         configurePlayButton()
+        configureDataSource()
+        menuController.collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .centeredHorizontally)
+        
+        setupPanGesture()
     }
     
     init(id: Int) {
         super.init(nibName: nil, bundle:nil)
         self.movieId = id
         self.viewModel = MovieDetailViewModel(id: id)
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: createFlowLayout())
     }
     
     
@@ -149,11 +189,75 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func setupPanGesture() {
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        view.addGestureRecognizer(panGesture)
+    }
+    
+    @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
+        let translation = gesture.translation(in: view)
+        
+        switch gesture.state {
+        case .began:
+            originalCenter = view.center
+            
+        case .changed:
+            view.center = CGPoint(x: originalCenter.x + translation.x, y: originalCenter.y + translation.y)
+            
+        case .ended:
+            let velocity = gesture.velocity(in: view)
+            let shouldDismiss = abs(translation.x) > threshold || abs(translation.y) > threshold || abs(velocity.x) > 500 || abs(velocity.y) > 500
+            
+            if shouldDismiss {
+                let directionX: CGFloat = translation.x > 0 ? 1 : -1
+                let directionY: CGFloat = translation.y > 0 ? 1 : -1
+                
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.view.center = CGPoint(x: self.originalCenter.x + directionX * self.view.bounds.width, y: self.originalCenter.y + directionY * self.view.bounds.height)
+                }) { _ in
+                    self.dismiss(animated: false)
+                    self.delegate?.dismissBlurView()
+                }
+            } else {
+                UIView.animate(withDuration: 0.3) {
+                    self.view.center = self.originalCenter
+                }
+            }
+            
+        default:
+            break
+        }
+    }
+    
+    private func configureXButton() {
+        imageView.addSubviews(xButton, shareButton)
+        
+        xButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(10)
+            make.height.width.equalTo(26)
+            make.top.equalToSuperview().inset(10)
+        }
+        
+        shareButton.snp.makeConstraints { make in
+            make.trailing.equalTo(xButton.snp.leading).offset(-4)
+            make.height.width.equalTo(26)
+            make.top.equalToSuperview().inset(10)
+        }
+    }
     
     private func configureViewController() {
-        view.backgroundColor = .systemBackground
-        navigationItem.rightBarButtonItems = [favButton]
+        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThickMaterialDark))
+        blurView.frame = view.bounds
+        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        
+        view.addSubview(blurView)
+        
+        blurView.alpha = 0.8
+        
+        view.layer.cornerRadius = 10
+        view.layer.masksToBounds = true
     }
+
     
     func configureImageView() {
         let width = view.frame.width
@@ -163,7 +267,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         view.addSubview(imageView)
         
         imageView.snp.makeConstraints { make in
-            make.top.equalTo(view.snp.top)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalTo(view)
             make.height.equalTo(imageHeight)
         }
@@ -278,12 +382,48 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
     func configureCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.backgroundColor = .clear
+        collectionView.register(SimilarMovieCell.self, forCellWithReuseIdentifier: SimilarMovieCell.identifier)
         
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(menuController.view.snp.bottom).offset(40)
+            make.top.equalTo(menuController.view.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview().inset(10)
-            make.height.equalTo(380)
+            make.height.equalTo(300)
         }
+    }
+    
+    func createFlowLayout() -> UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 0
+        
+        let itemsPerRow: CGFloat = 3
+        let spacing: CGFloat = 10
+        let availableWidth = ScreenSize.width - (spacing * (itemsPerRow + 1))
+        let itemWidth = availableWidth / itemsPerRow
+        
+        layout.itemSize = CGSize(width: itemWidth, height: 150)
+        return layout
+    }
+    
+    func updatedData(on movies: [Movie]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Movie>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(movies)
+        DispatchQueue.main.async{
+            self.dataSource.apply(snapshot,animatingDifferences: true)
+        }
+        calculateHeight(arr: movies)
+    }
+    
+    func configureDataSource() {
+        dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, follower in
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SimilarMovieCell.identifier, for: indexPath) as! SimilarMovieCell
+            let movie = self.showMovies[indexPath.item]
+            cell.set(movie: movie)
+            return cell
+        })
     }
     
     func setupMenuController() {
@@ -337,15 +477,15 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
     }
     
     func didTapMenuItem(indexPath: IndexPath) {
-        guard let selectedCell = collectionView.cellForItem(at: indexPath) else { return }
-
-        let cellFrame = selectedCell.frame
-
-        UIView.animate(withDuration: 0.3) {
-//            self.menuController.menuBar.frame = CGRect(x: cellFrame.origin.x, y: self.menuBar.frame.origin.y, width: cellFrame.width, height: self.menuBar.frame.height)
+        if indexPath.item == 0 {
+            showMovies = self.similarMovies
+            updatedData(on: self.showMovies)
+        } else if indexPath.item == 1 {
+            showMovies = self.recommendedMovies
+            updatedData(on: showMovies)
         }
     }
-
+    
     
     @objc func removeFavMovie() {
         viewModel?.removeFavMovie()
@@ -365,7 +505,24 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
     
     
     @objc func didTapPlayButton() {
-        viewModel?.fetchMovieVideo()
+        Task{
+            await viewModel?.fetchMovieVideo()
+        }
+    }
+    
+    func calculateHeight(arr: [Movie]) {
+        let itemsPerRow: CGFloat = 3
+        let spacing: CGFloat = 10
+        let availableWidth = ScreenSize.width - (spacing * (itemsPerRow + 1))
+        let itemHeight: CGFloat = 150
+        
+        let rowCount = ceil(CGFloat(arr.count) / itemsPerRow)
+        let totalSpacing = spacing * (rowCount - 1)
+        let height = rowCount * itemHeight + totalSpacing + 20
+        
+        collectionView.snp.updateConstraints { make in
+            make.height.equalTo(height)
+        }
     }
 }
 
@@ -393,7 +550,7 @@ extension MovieDetailVC: UICollectionViewDataSource, UICollectionViewDelegate {
 
 extension MovieDetailVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: (ScreenSize.width / 3) - 20, height: 100)
+        return CGSize(width: (ScreenSize.width / 3) - 20, height: 150)
     }
     
     
@@ -415,12 +572,12 @@ extension MovieDetailVC: MovieDetailViewModelDelegate{
             switch output {
             case .getDetail(let movie):
                 self.movie = movie
-                movieInfoView.set(movie: movie)
-                title = movie.title
-                overviewLabel.text = movie.overview
-                castLabel.text = "Cast Crew: " + (movie.cast?.map({ $0.name }).joined(separator: ", ") ?? "")
-                directorsLabel.text = "Director: " + (movie.directors?.map({ $0.name }).joined(separator: ", ") ?? "")
-                configureFavButtonItem()
+                self.movieInfoView.set(movie: movie)
+                self.title = movie.title
+                self.overviewLabel.text = movie.overview
+                self.castLabel.text = "Cast Crew: " + (movie.cast?.map({ $0.name }).joined(separator: ", ") ?? "")
+                self.directorsLabel.text = "Director: " + (movie.directors?.map({ $0.name }).joined(separator: ", ") ?? "")
+                self.configureFavButtonItem()
                 
             case .setLoading(let bool):
                 switch bool {
@@ -438,10 +595,8 @@ extension MovieDetailVC: MovieDetailViewModelDelegate{
                 
             case .getSimilarMovie(let movies):
                 self.similarMovies = movies
-                self.collectionView.reloadData()
-                self.collectionView.snp.updateConstraints { make in
-                    make.height.equalTo(self.similarMovies.count * 100 / 3 + 150)
-                }
+                self.showMovies = movies
+                self.updatedData(on: self.similarMovies)
                 
             case .didTapPlayButton(let videoURL):
                 presentSafariVC(with: videoURL)
@@ -459,6 +614,9 @@ extension MovieDetailVC: MovieDetailViewModelDelegate{
             case .configureFavButton(let image, let action):
                 favButton.action = action
                 favButton.image = image
+                
+            case .getRecommendedMovies(let movies):
+                self.recommendedMovies = movies
             }
         }
     }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate, UITextFieldDelegate {
+class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate {
     
     enum Section {
         case main
@@ -43,6 +43,8 @@ class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate, U
         super.viewDidLoad()
         
         navigationItem.hidesBackButton = true
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+
         
         viewModel.delegate = self
         Task{ await viewModel.load() }
@@ -65,6 +67,10 @@ class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate, U
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return self.navigationController?.viewControllers.count ?? 0 > 1
     }
     
     func updatedData(on movies: [Movie]) {
@@ -127,7 +133,7 @@ class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate, U
         
         stackView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(10)
             make.height.equalTo(40)
         }
     }
@@ -169,7 +175,6 @@ class SuggestedSearchViewController: UIViewController, HomeVCCarouselDelegate, U
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        // keyboard closed
         if scrollView.contentOffset.y > 0 {
             searchBar.resignFirstResponder()
         }

@@ -31,7 +31,7 @@ class MenuDetailController: UICollectionViewController, UICollectionViewDelegate
         collectionView.delegate = self
         collectionView.dataSource = self
         
-        collectionView.backgroundColor = .systemBackground
+        collectionView.backgroundColor = .clear
         collectionView.register(MenuCellDetail.self, forCellWithReuseIdentifier: MenuCellDetail.identifier)
         
         if let layout = collectionViewLayout as? UICollectionViewFlowLayout {
@@ -67,7 +67,7 @@ class MenuDetailController: UICollectionViewController, UICollectionViewDelegate
         }
         self.view.layoutIfNeeded()
         
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.3, initialSpringVelocity: 0.0, options: .curveEaseIn) {
+        UIView.animate(withDuration: 0.2) {
             self.menuBar.snp.updateConstraints { make in
                 make.width.equalTo(cellFrame.width)
             }
@@ -91,12 +91,12 @@ class MenuDetailController: UICollectionViewController, UICollectionViewDelegate
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let text = menuItems[indexPath.item]
-        let cellWidth = text.size(withAttributes:[.font: UIFont.preferredFont(forTextStyle: .headline).withSize(18)]).width
+        let cellWidth = text.size(withAttributes:[.font: UIFont.preferredFont(forTextStyle: .headline).withSize(16)]).width
         
         menuBar.snp.makeConstraints { make in
             make.width.equalTo(cellWidth)
         }
         
-        return .init(width: cellWidth, height: view.frame.height)
+        return .init(width: cellWidth + 2, height: view.frame.height)
     }
 }

@@ -59,13 +59,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>70</string>
+					<string>77</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>69</string>
+					<string>76</string>
 					<key>Timestamp</key>
-					<string>749994769.115968</string>
+					<string>750061463.158815</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -104,13 +104,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>322</string>
+					<string>357</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>321</string>
+					<string>356</string>
 					<key>Timestamp</key>
-					<string>749988087.010175</string>
+					<string>750073810.073734</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -126,16 +126,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>                destVC.modalPresentationStyle = .formSheet
+				<string>                self.present(destVC, animated: true)
 </string>
 				<key>leading</key>
-				<string>            case .selectMovie(let id):
-                let destVC = MovieDetailVC(id: id)
+				<string>                
+                setBlurView()
 </string>
 				<key>trailing</key>
-				<string>                present(destVC, animated: true)
-                
+				<string>                
             case .tappedSeeAll(let endpoint):
+                let destVC = SeeAllVC(endpoint: endpoint, type: endpoint.description)
 </string>
 			</dict>
 			<key>title</key>
@@ -151,13 +151,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>129</string>
+					<string>134</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>128</string>
+					<string>133</string>
 					<key>Timestamp</key>
-					<string>749988087.0101531</string>
+					<string>750073570.569211</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>

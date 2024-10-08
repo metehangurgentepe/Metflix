@@ -13,7 +13,7 @@ protocol HomeVCCarouselDelegate: AnyObject {
     func didSelectMovie(movieId: Int)
 }
 
-class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDelegate, SelectCategoryDelegate {
+class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDelegate, SelectCategoryDelegate, UIViewControllerTransitioningDelegate, MovieDetailControllerDelegate {
     var isCollectionViewVisible = true
     
     enum Section: Int, CaseIterable {
@@ -50,6 +50,7 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDe
     
     weak var delegate: HomeVCCarouselDelegate?
     lazy var viewModel = HomeViewModel()
+    let transition = PopAnimator()
     
     
     override func viewDidLoad() {
@@ -70,6 +71,10 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDe
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
     func setupHeaderView() {
@@ -200,6 +205,18 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDe
         blurView.effect = UIBlurEffect(style: .regular)
         
         view.addSubview(blurView)
+        
+        tabBarController?.tabBar.isHidden = true
+    }
+    
+    func dismissBlurView() {
+        for subview in view.subviews {
+            if subview.isKind(of: UIVisualEffectView.self) {
+                subview.removeFromSuperview()
+            }
+        }
+        
+        self.tabBarController?.tabBar.isHidden = false
     }
     
     func removeBlurView() {
@@ -211,6 +228,19 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDe
         
         self.tabBarController?.tabBar.isHidden = false
     }
+    
+    func animationController(
+      forPresented presented: UIViewController,
+      presenting: UIViewController, source: UIViewController)
+        -> UIViewControllerAnimatedTransitioning? {
+      return transition
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController)
+        -> UIViewControllerAnimatedTransitioning? {
+      return nil
+    }
+
 }
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
@@ -319,8 +349,12 @@ extension HomeViewController: MovieListViewModelDelegate {
                 
             case .selectMovie(let id):
                 let destVC = MovieDetailVC(id: id)
-                destVC.modalPresentationStyle = .formSheet
-                present(destVC, animated: true)
+                destVC.transitioningDelegate = self
+                destVC.modalPresentationStyle = .overFullScreen
+                destVC.delegate = self
+                
+                setBlurView()
+                self.present(destVC, animated: true)
                 
             case .tappedSeeAll(let endpoint):
                 let destVC = SeeAllVC(endpoint: endpoint, type: endpoint.description)

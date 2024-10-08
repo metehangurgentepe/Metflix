@@ -20,41 +20,48 @@ final class MovieDetailViewModel: MovieDetailViewModelProtocol{
         self.id = id
     }
     
-    func load() {
+    func load() async{
         self.delegate?.handleOutput(.setLoading(true))
-        Task{
-            do{
-                self.movie = try await MovieStore.shared.fetchMovieDetail(id: id)
-                self.movie?.credits = try await MovieStore.shared.fetchMovieCredits(id: id)
-                self.delegate?.handleOutput(.getDetail(self.movie!))
-                downloadImage()
-            } catch {
-                self.delegate?.handleOutput(.error(error as! MovieError))
-            }
+        do{
+            self.movie = try await MovieStore.shared.fetchMovieDetail(id: id)
+            self.movie?.credits = try await MovieStore.shared.fetchMovieCredits(id: id)
+            self.delegate?.handleOutput(.getDetail(self.movie!))
+            downloadImage()
+        } catch {
+            self.delegate?.handleOutput(.error(error as! MovieError))
         }
         self.delegate?.handleOutput(.setLoading(false))
     }
     
-    
-    func getSimilarMovies() {
-        Task{
-            do{
-                let movies = try await MovieStore.shared.getSimilarMovies(id: id).results
-                self.delegate?.handleOutput(.getSimilarMovie(movies))
-            } catch {
-                self.delegate?.handleOutput(.error(error as! MovieError))
-            }
+    func getRecommendedMovies() async{
+        do{
+            let movies = try await MovieStore.shared.fetchRecommendedMovies(from: .recommended, id: id).results
+            self.delegate?.handleOutput(.getRecommendedMovies(movies))
+        } catch {
+            self.delegate?.handleOutput(.error(error as! MovieError))
         }
     }
     
     
-    func fetchMovieVideo() {
-        Task{
+    func getSimilarMovies() async{
+        do{
+            let movies = try await MovieStore.shared.getSimilarMovies(id: id).results
+            self.delegate?.handleOutput(.getSimilarMovie(movies))
+        } catch {
+            self.delegate?.handleOutput(.error(error as! MovieError))
+        }
+    }
+    
+    
+    func fetchMovieVideo() async{
+        do{
             let video = try await MovieStore.shared.fetchMovieVideo(id: id).results
             let videoURLKey = video[0].key
             if let url = URL(string:"https://youtube.com/watch?v=\(videoURLKey)") {
                 self.delegate?.handleOutput(.didTapPlayButton(url))
             }
+        } catch {
+            self.delegate?.handleOutput(.error(error as! MovieError))
         }
     }
     

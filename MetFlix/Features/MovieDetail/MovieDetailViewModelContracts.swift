@@ -10,7 +10,10 @@ import UIKit
 
 protocol MovieDetailViewModelProtocol {
     var delegate: MovieDetailViewModelDelegate? { get set }
-    func load()
+    func load() async
+    func getRecommendedMovies() async
+    func getSimilarMovies() async
+    func fetchMovieVideo() async
 }
 
 enum MovieDetailViewModelOutput {
@@ -21,6 +24,7 @@ enum MovieDetailViewModelOutput {
     case getSimilarMovie([Movie])
     case didTapPlayButton(URL)
     case addFavMovie
+    case getRecommendedMovies([Movie])
     case removeFavMovie
     case infoButtonTapped(URL)
     case configureFavButton(UIImage, Selector)

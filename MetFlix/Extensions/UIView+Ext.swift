@@ -25,4 +25,11 @@ extension UIView {
             bottomAnchor.constraint(equalTo: superview.bottomAnchor)
         ])
     }
+    func asImage() -> UIImage {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { rendererContext in
+            drawHierarchy(in: bounds, afterScreenUpdates: true)
+        }
+    }
+    
 }
