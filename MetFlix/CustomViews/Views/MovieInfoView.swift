@@ -73,7 +73,6 @@ class MovieInfoView: UIView {
     
     
     func set(movie: Movie) {
-        print(movie)
         dateLabel.text = movie.yearText
         runtimeLabel.text = movie.runtime!.description + " min"
         nameLabel.text = movie.title

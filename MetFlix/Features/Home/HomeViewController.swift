@@ -71,10 +71,7 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDe
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        self.navigationController?.setNavigationBarHidden(false, animated: false)
+        tabBarController?.tabBar.isHidden = false
     }
     
     func setupHeaderView() {
@@ -182,7 +179,7 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDe
     
     func navigateSearch() {
         let vc = SuggestedSearchViewController()
-        vc.hidesBottomBarWhenPushed = true
+        vc.modalPresentationStyle = .overFullScreen
         navigationController?.pushViewController(vc, animated: false)
     }
     

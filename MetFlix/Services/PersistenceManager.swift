@@ -24,7 +24,6 @@ enum PersistenceManager {
             switch result {
             case .success(let favorites):
                 guard !favorites.contains(favorite) else {
-                    print("here")
                     completion(.success(true))
                     return
                 }
