@@ -27,6 +27,8 @@ class Header: UITableViewHeaderFooterView {
         return button
     }()
     
+    var action: UIAction?
+    
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -37,6 +39,7 @@ class Header: UITableViewHeaderFooterView {
         self.init(reuseIdentifier: nil)
         titleLabel.text = title
         guard let action else { return }
+        self.action = action
         seeAllButton.addAction(action, for: .touchUpInside)
     }
     
@@ -57,6 +60,10 @@ class Header: UITableViewHeaderFooterView {
             make.bottom.top.equalToSuperview()
             make.trailing.equalToSuperview().offset(-10)
             make.leading.equalToSuperview().offset(10)
+        }
+        
+        if self.action == nil {
+            seeAllButton.removeFromSuperview()
         }
     }
 }

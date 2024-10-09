@@ -23,24 +23,24 @@ class ProfileVC: UIViewController, HomeVCCarouselDelegate {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 20, weight: .heavy)
-
+        
         let text = NSAttributedString(string: "My Netflix ", attributes: [
             .font: UIFont.systemFont(ofSize: 20, weight: .heavy),
             .foregroundColor: UIColor.white
         ])
-
+        
         let attachment = NSTextAttachment()
         attachment.image = UIImage(systemName: "chevron.down")?.withTintColor(.white)
         attachment.bounds = CGRect(x: 0, y: 3, width: 10, height: 6)
-
+        
         let attachmentString = NSAttributedString(attachment: attachment)
-
+        
         let completeString = NSMutableAttributedString()
         completeString.append(text)
         completeString.append(attachmentString)
-
+        
         label.attributedText = completeString
-
+        
         let image = UIImageView()
         image.image = UIImage(named: "avatar1")
         image.layer.cornerRadius = 10
@@ -179,7 +179,7 @@ extension ProfileVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 1:
-            return 255
+            return 260
         case 2:
             return 225
         default:
@@ -231,6 +231,21 @@ extension ProfileVC: UITableViewDelegate, UITableViewDataSource {
     
     func didSelectMovie(movieId: Int) {
         
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        switch section {
+        case 1:
+            let view = Header(title: "Liked Series and Movies", action: nil)
+            return view
+            
+        case 2:
+            let view = Header(title: "My List", action: nil)
+            return view
+            
+        default:
+            return UIView()
+        }
     }
 }
 
