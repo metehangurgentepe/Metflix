@@ -295,6 +295,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
     func configureHorizontalButtonStackView() {
         listButton.verticalImage = UIImage(systemName: "plus")
         listButton.verticalTitle = "My List"
+        listButton.addTarget(self, action: #selector(listButtonTapped), for: .touchUpInside)
         
         givePointButton.verticalImage = UIImage(systemName: "hand.thumbsup")
         givePointButton.verticalTitle = "Rate this"
@@ -307,7 +308,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         horizontalButtonStackView.addArrangedSubview(recommendButton)
         
         horizontalButtonStackView.distribution = .fillEqually
-        horizontalButtonStackView.alignment = .leading
+        horizontalButtonStackView.alignment = .fill
         
         horizontalButtonStackView.snp.makeConstraints { make in
             make.top.equalTo(directorsLabel.snp.bottom).offset(10)
@@ -486,6 +487,24 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         }
     }
     
+    func calculateHeight(arr: [Movie]) {
+        let itemsPerRow: CGFloat = 3
+        let spacing: CGFloat = 10
+        let availableWidth = ScreenSize.width - (spacing * (itemsPerRow + 1))
+        let itemHeight: CGFloat = 150
+        
+        let rowCount = ceil(CGFloat(arr.count) / itemsPerRow)
+        let totalSpacing = spacing * (rowCount - 1)
+        let height = rowCount * itemHeight + totalSpacing + 20
+        
+        collectionView.snp.updateConstraints { make in
+            make.height.equalTo(height)
+        }
+    }
+    
+    @objc func listButtonTapped() {
+        listButton.animatedRotation()
+    }
     
     @objc func removeFavMovie() {
         viewModel?.removeFavMovie()
@@ -510,20 +529,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         }
     }
     
-    func calculateHeight(arr: [Movie]) {
-        let itemsPerRow: CGFloat = 3
-        let spacing: CGFloat = 10
-        let availableWidth = ScreenSize.width - (spacing * (itemsPerRow + 1))
-        let itemHeight: CGFloat = 150
-        
-        let rowCount = ceil(CGFloat(arr.count) / itemsPerRow)
-        let totalSpacing = spacing * (rowCount - 1)
-        let height = rowCount * itemHeight + totalSpacing + 20
-        
-        collectionView.snp.updateConstraints { make in
-            make.height.equalTo(height)
-        }
-    }
+    
 }
 
 extension MovieDetailVC: UICollectionViewDataSource, UICollectionViewDelegate {

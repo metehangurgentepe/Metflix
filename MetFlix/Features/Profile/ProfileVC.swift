@@ -24,7 +24,7 @@ class ProfileVC: UIViewController, HomeVCCarouselDelegate {
         label.textColor = .white
         label.font = .systemFont(ofSize: 20, weight: .heavy)
         
-        let text = NSAttributedString(string: "My Netflix ", attributes: [
+        let text = NSAttributedString(string: "Metehan ", attributes: [
             .font: UIFont.systemFont(ofSize: 20, weight: .heavy),
             .foregroundColor: UIColor.white
         ])
@@ -120,7 +120,7 @@ class ProfileVC: UIViewController, HomeVCCarouselDelegate {
         let offset = scrollView.contentOffset.y
         
         if offset > 15 {
-            titleStackView.alpha = offset * 0.02
+            titleStackView.alpha = offset * 0.01
             navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleStackView)
         }else {
             navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
@@ -179,9 +179,9 @@ extension ProfileVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 1:
-            return 260
+            return 240
         case 2:
-            return 225
+            return 230
         default:
             return 50
         }

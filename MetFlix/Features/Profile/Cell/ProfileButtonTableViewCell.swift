@@ -53,7 +53,7 @@ class ProfileButtonTableViewCell: UITableViewCell {
         circularImageView.addSubview(image)
         
         circularImageView.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
+            make.leading.equalToSuperview().inset(10)
             make.height.width.equalTo(40)
             make.centerY.equalToSuperview()
         }

@@ -29,7 +29,6 @@ class Header: UITableViewHeaderFooterView {
     
     var action: UIAction?
     
-    
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         configure()
