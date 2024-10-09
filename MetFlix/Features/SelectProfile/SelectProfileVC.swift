@@ -11,11 +11,24 @@ class SelectProfileVC: UIViewController {
     
     var collectionView: UICollectionView!
     
-    var profiles: [(String, UIImage)] = []
-    var selectedProfile: (String, UIImage)?
+    var profiles: [User] = []
+    var selectedProfile: (String, String)?
+    
+    let viewModel = SelectProfileViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureViewController()
+        
+        setupCollectionView()
+        
+        viewModel.delegate = self
+        viewModel.fetchUsers()
+       
+        setupProfiles()
+    }
+    
+    fileprivate func configureViewController() {
         view.backgroundColor = .systemBackground
         
         title = "Who's watching?"
@@ -23,9 +36,6 @@ class SelectProfileVC: UIViewController {
         let editButton = UIBarButtonItem(systemItem: .edit)
         editButton.tintColor = .white
         navigationItem.rightBarButtonItem = editButton
-        
-        setupCollectionView()
-        setupProfiles()
     }
     
     private func setupCollectionView() {
@@ -50,12 +60,6 @@ class SelectProfileVC: UIViewController {
     }
     
     private func setupProfiles() {
-        profiles = [
-            ("Metehan", UIImage(named: "avatar1")!),
-            ("Friend 1", UIImage(named: "avatar2")!),
-            ("Friend 2", UIImage(named: "avatar3")!),
-            ("Guest", UIImage(named: "avatar4")!)
-        ]
         collectionView.reloadData()
         
         collectionView.snp.remakeConstraints { make in
@@ -69,7 +73,7 @@ class SelectProfileVC: UIViewController {
     private func goToMainTabBar() {
         let tabBarVC = TabBarViewController()
         if let selectedProfile = selectedProfile {
-            tabBarVC.selectedProfileImage = selectedProfile.1
+            tabBarVC.selectedProfileImage = UIImage(named: selectedProfile.1)
         }
         tabBarVC.modalTransitionStyle = .crossDissolve
         tabBarVC.modalPresentationStyle = .fullScreen
@@ -86,7 +90,8 @@ extension SelectProfileVC: UICollectionViewDelegate, UICollectionViewDataSource,
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileCell.identifier, for: indexPath) as! ProfileCell
-        cell.configure(name: profiles[indexPath.row].0, image: profiles[indexPath.row].1)
+        cell.configure(name: profiles[indexPath.row].username ?? "", image: profiles[indexPath.row].imageName)
+        print(profiles[indexPath.row].username,"usernameler burada")
         return cell
     }
     
@@ -99,8 +104,26 @@ extension SelectProfileVC: UICollectionViewDelegate, UICollectionViewDataSource,
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        selectedProfile = profiles[indexPath.row]
+        selectedProfile = (profiles[indexPath.row].username, profiles[indexPath.row].imageName) as! (String, String)
         
         goToMainTabBar()
     }
+}
+
+extension SelectProfileVC: SelectProfileViewModelDelegate {
+    func handleOutput(_ output: SelectProfileViewModelOutput) {
+        switch output {
+        case .error(let error):
+            let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
+            
+        case .fetchUsers(let users):
+            self.profiles = users
+            print(profiles.map({$0.username}))
+            collectionView.reloadData()
+        }
+    }
+    
+    
 }

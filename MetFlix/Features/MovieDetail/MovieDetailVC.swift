@@ -51,6 +51,8 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         stackView.spacing = 10
         return stackView
     }()
+    private let popoverView = UIView()
+    private let overlayView = UIView()
     
     let horizontalPlayButton: UIButton = {
         let button = UIButton()
@@ -126,6 +128,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         return button
     }()
     
+    lazy var menuView = menuController.view!
     let listButton = VerticalButton(frame: .zero)
     let givePointButton = VerticalButton(frame: .zero)
     let recommendButton = VerticalButton(frame: .zero)
@@ -133,7 +136,6 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
     let horizontalButtonStackView = UIStackView()
     var dataSource: UICollectionViewDiffableDataSource<Section, Movie>!
     var collectionView: UICollectionView!
-    
     var movieId: Int!
     var movie: Movie?
     var similarMovies = [Movie]()
@@ -148,8 +150,6 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tabBarController?.tabBar.isHidden = true
-        
         viewModel?.delegate = self
         Task{
             await viewModel?.load()
@@ -158,7 +158,6 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         }
         
         configureViewController()
-        setupMenuController()
         configureImageView()
         configureXButton()
         configureScrollView()
@@ -172,9 +171,14 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         configureCollectionView()
         configurePlayButton()
         configureDataSource()
-        menuController.collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .centeredHorizontally)
-        
         setupPanGesture()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hidePopover))
+        overlayView.addGestureRecognizer(tapGesture)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        menuController.collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .centeredHorizontally)
     }
     
     init(id: Int) {
@@ -183,7 +187,6 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         self.viewModel = MovieDetailViewModel(id: id)
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: createFlowLayout())
     }
-    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -231,7 +234,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
     
     private func configureXButton() {
         imageView.addSubviews(xButton, shareButton)
-        
+                
         xButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(10)
             make.height.width.equalTo(26)
@@ -245,7 +248,10 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         }
     }
     
+    
     private func configureViewController() {
+        tabBarController?.tabBar.isHidden = true
+        
         let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThickMaterialDark))
         blurView.frame = view.bounds
         blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -257,7 +263,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true
     }
-
+    
     
     func configureImageView() {
         let width = view.frame.width
@@ -299,6 +305,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         
         givePointButton.verticalImage = UIImage(systemName: "hand.thumbsup")
         givePointButton.verticalTitle = "Rate this"
+        givePointButton.addTarget(self, action: #selector(giveRateTapped), for: .touchUpInside)
         
         recommendButton.verticalImage = UIImage(systemName: "paperplane")
         recommendButton.verticalTitle = "Recommend"
@@ -339,7 +346,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         stackView.addArrangedSubview(castLabel)
         stackView.addArrangedSubview(directorsLabel)
         stackView.addArrangedSubview(horizontalButtonStackView)
-        stackView.addArrangedSubview(menuController.view)
+        stackView.addArrangedSubview(menuView)
         stackView.addArrangedSubview(collectionView)
         
         scrollView.addSubview(stackView)
@@ -370,15 +377,16 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
     }
     
     func configureMenuController() {
-        let menuView = menuController.view!
+        menuController.delegate = self
         
         menuView.snp.makeConstraints { make in
             make.top.equalTo(horizontalButtonStackView.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(10)
             make.height.equalTo(40)
         }
+        
+        menuController.collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .left)
     }
-    
     
     func configureCollectionView() {
         collectionView.delegate = self
@@ -427,13 +435,6 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         })
     }
     
-    func setupMenuController() {
-        menuController.delegate = self
-        
-        menuController.collectionView.selectItem(at: [0,0], animated: true, scrollPosition: .centeredHorizontally)
-    }
-    
-    
     func configureScrollView() {
         view.addSubview(scrollView)
         
@@ -448,7 +449,6 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         }
     }
     
-    
     func configureOverviewLabel() {
         overviewLabel.snp.makeConstraints { make in
             make.top.equalTo(buttonStackView.snp.bottom).offset(20)
@@ -456,17 +456,14 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         }
     }
     
-    
     @objc func infoButtonTapped() {
         viewModel?.infoButtonTapped()
     }
-    
     
     func configureFavButtonItem() {
         self.favButton.target = self
         viewModel?.checkMovieIsSaved()
     }
-    
     
     func configureMovieInfoView() {
         movieInfoView.snp.makeConstraints { make in
@@ -506,6 +503,72 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         listButton.animatedRotation()
     }
     
+    private func setupPopover() {
+        overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.8)
+        overlayView.isHidden = false
+        view.addSubview(overlayView)
+        
+        overlayView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        popoverView.backgroundColor = .customDarkGray
+        popoverView.layer.cornerRadius = 40
+        popoverView.isHidden = true
+        
+        let button1 = VerticalButton(frame: .zero)
+        button1.verticalImage = UIImage(systemName: "hand.thumbsdown")
+        button1.verticalTitle = "Bunu sevmedim"
+        button1.addTarget(self, action: #selector(hidePopover), for: .touchUpInside)
+        
+        let button2 = VerticalButton(frame: .zero)
+        button2.verticalImage = UIImage(systemName: "hand.thumbsup")
+        button2.verticalTitle = "Buna bayıldım"
+        button2.addTarget(self, action: #selector(hidePopover), for: .touchUpInside)
+        
+        let buttonStackView = UIStackView(arrangedSubviews: [button1, button2])
+        buttonStackView.axis = .horizontal
+        buttonStackView.spacing = 10
+        popoverView.addSubview(buttonStackView)
+        
+        buttonStackView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.height.equalTo(50)
+            make.width.equalTo(200)
+        }
+        
+        view.addSubview(popoverView)
+        
+        popoverView.snp.makeConstraints { make in
+            make.centerX.equalTo(givePointButton.snp.centerX)
+            make.bottom.equalTo(givePointButton.snp.top).offset(-10)
+            make.width.equalTo(200)
+            make.height.equalTo(100)
+        }
+    }
+    
+    @objc func hidePopover() {
+        overlayView.isHidden = true
+        popoverView.isHidden = true
+    }
+    
+    @objc func giveRateTapped() {
+        setupPopover()
+        
+        popoverView.isHidden = !popoverView.isHidden
+        if !popoverView.isHidden {
+            popoverView.alpha = 0
+            UIView.animate(withDuration: 0.3) {
+                self.popoverView.alpha = 1
+            }
+        } else {
+            UIView.animate(withDuration: 0.3) {
+                self.popoverView.alpha = 0
+            }
+        }
+    }
+    
     @objc func removeFavMovie() {
         viewModel?.removeFavMovie()
     }
@@ -528,8 +591,6 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
             await viewModel?.fetchMovieVideo()
         }
     }
-    
-    
 }
 
 extension MovieDetailVC: UICollectionViewDataSource, UICollectionViewDelegate {

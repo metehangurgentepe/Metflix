@@ -136,7 +136,7 @@ class NewsAndPopularTableViewCell: UITableViewCell {
             make.top.equalTo(thumbnailImageView.snp.bottom).offset(4)
             make.leading.equalTo(productTitleLabel.snp.leading)
             make.width.equalTo(120)
-            make.height.equalTo(50)
+            make.height.lessThanOrEqualTo(50)
         }
         
         buttonStackView.snp.makeConstraints { make in

@@ -56,6 +56,8 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
+//        let movie = MovieEntity()
+        
         navigationController?.navigationBar.isHidden = true
         
         view.backgroundColor = .systemBackground

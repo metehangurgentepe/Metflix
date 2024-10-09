@@ -74,6 +74,10 @@ struct Movie: Codable, Identifiable, Hashable {
     var posterURL: URL {
         return URL(string: "https://image.tmdb.org/t/p/w780\(posterPath ?? "")")!
     }
+    
+    var lowResolutionPosterURL: URL {
+        return URL(string: "https://image.tmdb.org/t/p/w300\(posterPath ?? "")")!
+    }
 
     var genreText: String {
         genres?.first?.name ?? "n/a"

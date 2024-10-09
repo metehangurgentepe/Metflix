@@ -41,7 +41,6 @@ class MenuDetailController: UICollectionViewController, UICollectionViewDelegate
         }
         
         view.addSubview(menuBar)
-        
         view.bringSubviewToFront(menuBar)
         
         menuBar.snp.makeConstraints { make in
@@ -81,6 +80,9 @@ class MenuDetailController: UICollectionViewController, UICollectionViewDelegate
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MenuDetailCell", for: indexPath) as! MenuCellDetail
+        if indexPath.item == 0 {
+            cell.isSelected = true
+        }
         cell.label.text = menuItems[indexPath.item]
         return cell
     }

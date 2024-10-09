@@ -41,8 +41,8 @@ class ProfileCell: UICollectionViewCell {
         }
     }
     
-    func configure(name: String, image: UIImage?) {
-        imageView.image = image
+    func configure(name: String, image: String?) {
+        imageView.image = UIImage(named: image!)
         nameLabel.text = name
     }
 }

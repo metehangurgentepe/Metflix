@@ -31,7 +31,7 @@ class SimilarMovieCell: UICollectionViewCell {
     
     
     func set(movie: Movie) {
-        imageView.sd_setImage(with: movie.posterURL)
+        imageView.sd_setImage(with: movie.lowResolutionPosterURL)
     }
     
     
