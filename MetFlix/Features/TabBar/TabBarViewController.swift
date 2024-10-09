@@ -11,6 +11,9 @@ import SnapKit
 
 
 class TabBarViewController: UITabBarController {
+    
+    var selectedProfileImage: UIImage?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.viewControllers = TabBarModel.createTabBarItems().map{ $0.viewController }
@@ -47,9 +50,9 @@ class TabBarViewController: UITabBarController {
             selectedImage: SFSymbols.selectedNewAndPopular,
             vc: secondVC.viewController)
         let saved = self.createNav(
-            with: thirdVC.title,
-            and: SFSymbols.favorites,
-            selectedImage: SFSymbols.selectedFavorites,
+            with: "My Netflix",
+            and: selectedProfileImage?.resized(to: .init(width: 20, height: 20)),
+            selectedImage: selectedProfileImage?.resized(to: .init(width: 20, height: 20)),
             vc: thirdVC.viewController)
         
         self.setViewControllers([home,search,saved], animated: true)
@@ -62,4 +65,29 @@ class TabBarViewController: UITabBarController {
         nav.tabBarItem.selectedImage = selectedImage
         return nav
     }
+    
+    func animateProfileTabIcon() {
+        guard let items = tabBar.items, let profileImage = selectedProfileImage?.resized(to: .init(width: 20, height: 20)) else { return }
+        
+        guard let tabBarItemFrame = tabBar.items?[2].value(forKey: "view") as? UIView else { return }
+        
+        let imageView = UIImageView(image: profileImage.withRenderingMode(.alwaysOriginal))
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: -100, y: view.frame.midY - 50, width: 50, height: 50)
+        view.addSubview(imageView)
+        
+        let targetPosition = CGPoint(x: tabBarItemFrame.center.x - 50, y: tabBar.frame.origin.y - 50)
+        
+        UIView.animate(withDuration: 0.6, delay: 0, options: [.curveEaseInOut], animations: {
+        
+            imageView.frame.origin = targetPosition
+        }, completion: { _ in
+        
+            self.tabBar.items?[2].image = profileImage.withRenderingMode(.alwaysOriginal)
+            
+            imageView.removeFromSuperview()
+        })
+    }
+
+
 }

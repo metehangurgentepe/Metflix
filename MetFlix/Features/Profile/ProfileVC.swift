@@ -1,0 +1,261 @@
+//
+//  ProfileVC.swift
+//  MetFlix
+//
+//  Created by Metehan Gürgentepe on 9.10.2024.
+//
+
+import UIKit
+
+class ProfileVC: UIViewController, HomeVCCarouselDelegate {
+    let tableView = UITableView(frame: .zero, style: .grouped)
+    let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "My Netflix"
+        label.font = .systemFont(ofSize: 28, weight: .bold)
+        label.textColor = .white
+        return label
+    }()
+    
+    let headerView: UIView = {
+        let view = UIStackView()
+        
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 20, weight: .heavy)
+
+        let text = NSAttributedString(string: "My Netflix ", attributes: [
+            .font: UIFont.systemFont(ofSize: 20, weight: .heavy),
+            .foregroundColor: UIColor.white
+        ])
+
+        let attachment = NSTextAttachment()
+        attachment.image = UIImage(systemName: "chevron.down")?.withTintColor(.white)
+        attachment.bounds = CGRect(x: 0, y: 3, width: 10, height: 6)
+
+        let attachmentString = NSAttributedString(attachment: attachment)
+
+        let completeString = NSMutableAttributedString()
+        completeString.append(text)
+        completeString.append(attachmentString)
+
+        label.attributedText = completeString
+
+        let image = UIImageView()
+        image.image = UIImage(named: "avatar1")
+        image.layer.cornerRadius = 10
+        image.clipsToBounds = true
+        image.contentMode = .scaleAspectFit
+        
+        view.addArrangedSubview(image)
+        view.addArrangedSubview(label)
+        
+        view.axis = .vertical
+        view.spacing = 1
+        view.alignment = .center
+        view.distribution = .fillEqually
+        
+        return view
+    }()
+    
+    let titleStackView: UIStackView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "avatar1")
+        image.layer.cornerRadius = 4
+        image.clipsToBounds = true
+        image.contentMode = .scaleAspectFit
+        
+        image.snp.makeConstraints { make in
+            make.width.height.equalTo(30)
+        }
+        
+        let label = UILabel()
+        label.text = "Metehan"
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 20, weight: .heavy)
+        
+        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        
+        let icon = UIImageView(image: UIImage(systemName: "chevron.down"))
+        icon.tintColor = .white
+        icon.contentMode = .scaleAspectFit
+        
+        icon.snp.makeConstraints { make in
+            make.width.height.equalTo(15)
+        }
+        
+        let stackView = UIStackView(arrangedSubviews: [image, label, icon])
+        stackView.axis = .horizontal
+        stackView.spacing = 4
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        
+        return stackView
+    }()
+    
+    lazy var viewModel = ProfileViewModel()
+    var likedMovies = [Movie]()
+    var myList = [Movie]()
+    
+    let buttonsCell: [ProfileCellModel] = [
+        ProfileCellModel(color: .netflixRed, title: "Notifications", icon: UIImage(systemName:"bell.fill")!),
+        ProfileCellModel(color: .customBlue, title: "Downloads", icon: UIImage(systemName:"arrow.down.to.line")!)
+    ]
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        view.backgroundColor = .systemBackground
+        
+        configureNavBar()
+        headerTableView()
+        configureTableView()
+        
+        viewModel.delegate = self
+        Task{ await viewModel.load() }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offset = scrollView.contentOffset.y
+        
+        if offset > 15 {
+            titleStackView.alpha = offset * 0.02
+            navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleStackView)
+        }else {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
+        }
+    }
+    
+    private func configureNavBar() {
+        let leftItem = UIBarButtonItem(customView: titleLabel)
+        navigationItem.leftBarButtonItem = leftItem
+        
+        let shareItem = UIButton()
+        shareItem.setImage(UIImage(systemName: "shareplay")?.resized(to: .init(width: 35, height: 35)).withRenderingMode(.alwaysTemplate), for: .normal)
+        shareItem.tintColor = .white
+        
+        let searchItem = UIButton()
+        searchItem.setImage(UIImage(systemName: "magnifyingglass")?.resized(to: .init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate), for: .normal)
+        searchItem.tintColor = .white
+        
+        let settingsItem = UIButton()
+        settingsItem.setImage(UIImage(systemName: "line.3.horizontal")?.resized(to: .init(width: 35, height: 35)).withRenderingMode(.alwaysTemplate), for: .normal)
+        settingsItem.tintColor = .white
+        
+        let stackView = UIStackView(arrangedSubviews: [shareItem,searchItem,settingsItem])
+        stackView.spacing = 15
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: stackView)
+    }
+    
+    private func configureTableView() {
+        tableView.register(ProfileButtonTableViewCell.self, forCellReuseIdentifier: ProfileButtonTableViewCell.identifier)
+        tableView.register(CollectionViewTableViewCell.self, forCellReuseIdentifier: CollectionViewTableViewCell.identifier)
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        tableView.separatorStyle = .none
+        tableView.showsVerticalScrollIndicator = false
+        
+        view.addSubview(tableView)
+        
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    private func headerTableView() {
+        headerView.frame = CGRect(x: 0, y: 0, width: ScreenSize.width * 0.5, height: 100)
+        tableView.tableHeaderView = headerView
+    }
+}
+
+extension ProfileVC: UITableViewDelegate, UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch indexPath.section {
+        case 1:
+            return 255
+        case 2:
+            return 225
+        default:
+            return 50
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        switch section {
+        case 0:
+            return 2
+        case 1:
+            return 1
+        case 2:
+            return 1
+            
+        default:
+            return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch indexPath.section {
+        case 0:
+            let cell = tableView.dequeueReusableCell(withIdentifier: ProfileButtonTableViewCell.identifier, for: indexPath) as! ProfileButtonTableViewCell
+            let model = buttonsCell[indexPath.row]
+            cell.configure(color: model.color, image: model.icon, title: model.title)
+            return cell
+            
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: CollectionViewTableViewCell.identifier, for: indexPath) as! CollectionViewTableViewCell
+            cell.configure(movies: likedMovies, delegate: self)
+            cell.isRecommended = true
+            return cell
+            
+        case 2:
+            let cell = tableView.dequeueReusableCell(withIdentifier: CollectionViewTableViewCell.identifier, for: indexPath) as! CollectionViewTableViewCell
+            cell.configure(movies: myList, delegate: self)
+            return cell
+            
+        default:
+            return UITableViewCell()
+        }
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 3
+    }
+    
+    func didSelectMovie(movieId: Int) {
+        
+    }
+}
+
+
+extension ProfileVC: ProfileViewModelDelegate {
+    func handleOutput(_ output: ProfileViewModelOutput) {
+        DispatchQueue.main.async{ [weak self] in
+            guard let self else { return }
+            switch output {
+            case .likedMovies(let movieResponse):
+                self.likedMovies = movieResponse.results
+                self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+                
+            case .myList(let movieResponse):
+                self.myList = movieResponse.results
+                self.tableView.reloadSections(IndexSet(integer: 2), with: .automatic)
+                
+            case .error(let movieError):
+                break
+            case .setLoading(let bool):
+                break
+            case .selectMovie(let int):
+                break
+            }
+        }
+    }
+}
+

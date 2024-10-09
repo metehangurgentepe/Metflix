@@ -21,7 +21,7 @@ struct TabBarModel {
     static func createTabBarItems() -> [TabBarModel] {
         let firstTab = TabBarModel(iconName: "", title: "Home", viewController: HomeViewController())
         let secondTab = TabBarModel(iconName: "", title: "New and Popular", viewController: NewAndPopularVC())
-        let thirdTab = TabBarModel(iconName: "", title: "My Profile", viewController: FavoriteViewController())
+        let thirdTab = TabBarModel(iconName: "", title: "My Profile", viewController: ProfileVC())
         
         
         return [firstTab, secondTab, thirdTab]

@@ -15,6 +15,7 @@ class CollectionViewTableViewCell: UITableViewCell, UICollectionViewDelegateFlow
     var title: String?
     var action: UIAction?
     private var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+    var isRecommended: Bool = false
     
     weak var delegate: HomeVCCarouselDelegate?
     
@@ -87,7 +88,7 @@ extension CollectionViewTableViewCell: UICollectionViewDataSource, UICollectionV
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.identifier, for: indexPath) as! MovieCollectionViewCell
             let model = movieArr[indexPath.row]
-            cell.configure(movie: model)
+            cell.configure(movie: model, isRecommended: isRecommended)
             return cell
         }
     }

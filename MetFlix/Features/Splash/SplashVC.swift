@@ -42,7 +42,7 @@ class SplashVC: UIViewController {
     }
     
     private func navigateToNextScreen() {
-        let nextVC = TabBarViewController()
+        let nextVC = UINavigationController(rootViewController: SelectProfileVC())
         nextVC.modalPresentationStyle = .fullScreen
         present(nextVC, animated: true, completion: nil)
     }

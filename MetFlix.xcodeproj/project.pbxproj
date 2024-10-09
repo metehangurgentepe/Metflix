@@ -12,6 +12,7 @@
 		661853E32B7D8020005E0976 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661853E22B7D8020005E0976 /* EmptyStateView.swift */; };
 		661853E52B7D8044005E0976 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661853E42B7D8044005E0976 /* Constants.swift */; };
 		661937972B7ABB0A00EFCC48 /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661937962B7ABB0A00EFCC48 /* UIHelper.swift */; };
+		66249E392CB66E38005A4A1A /* ThemeColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66249E382CB66E38005A4A1A /* ThemeColors.swift */; };
 		662EED852B77893B00470192 /* AlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662EED842B77893B00470192 /* AlertVC.swift */; };
 		662EED882B77898B00470192 /* TitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662EED872B77898B00470192 /* TitleLabel.swift */; };
 		662EED8A2B77899400470192 /* BodyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662EED892B77899400470192 /* BodyLabel.swift */; };
@@ -112,6 +113,7 @@
 		661853E22B7D8020005E0976 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		661853E42B7D8044005E0976 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		661937962B7ABB0A00EFCC48 /* UIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHelper.swift; sourceTree = "<group>"; };
+		66249E382CB66E38005A4A1A /* ThemeColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColors.swift; sourceTree = "<group>"; };
 		662EED842B77893B00470192 /* AlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertVC.swift; sourceTree = "<group>"; };
 		662EED872B77898B00470192 /* TitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabel.swift; sourceTree = "<group>"; };
 		662EED892B77899400470192 /* BodyLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyLabel.swift; sourceTree = "<group>"; };
@@ -195,7 +197,9 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		6647FCF52CAD8B440006DF58 /* NewAndPopular */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = NewAndPopular; sourceTree = "<group>"; };
 		6647FDD12CAEA1C30006DF58 /* CategoryController */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = CategoryController; sourceTree = "<group>"; };
+		667875C02CB5A373003EBB5B /* SelectProfile */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SelectProfile; sourceTree = "<group>"; };
 		66A69DDE2CB5473E00C2D7C7 /* Splash */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Splash; sourceTree = "<group>"; };
+		66A69DED2CB55ECD00C2D7C7 /* Profile */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Profile; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -226,6 +230,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		66249E372CB66E2E005A4A1A /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				66249E382CB66E38005A4A1A /* ThemeColors.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
 		662EED832B77892000470192 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -350,6 +362,7 @@
 		664F3CB72B6118DC009C5E3B /* MetFlix */ = {
 			isa = PBXGroup;
 			children = (
+				66249E372CB66E2E005A4A1A /* Theme */,
 				66EB5D792B65553E001ADD72 /* Services */,
 				664F3CEC2B611969009C5E3B /* Model */,
 				664F3CEB2B611961009C5E3B /* Extensions */,
@@ -384,6 +397,8 @@
 		664F3CE82B611911009C5E3B /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				667875C02CB5A373003EBB5B /* SelectProfile */,
+				66A69DED2CB55ECD00C2D7C7 /* Profile */,
 				66A69DDE2CB5473E00C2D7C7 /* Splash */,
 				6647FCF52CAD8B440006DF58 /* NewAndPopular */,
 				669E96702B7A99BA00A3EA6F /* SeeAll */,
@@ -551,7 +566,9 @@
 			fileSystemSynchronizedGroups = (
 				6647FCF52CAD8B440006DF58 /* NewAndPopular */,
 				6647FDD12CAEA1C30006DF58 /* CategoryController */,
+				667875C02CB5A373003EBB5B /* SelectProfile */,
 				66A69DDE2CB5473E00C2D7C7 /* Splash */,
+				66A69DED2CB55ECD00C2D7C7 /* Profile */,
 			);
 			name = MetFlix;
 			packageProductDependencies = (
@@ -732,6 +749,7 @@
 				6665603A2B80AD3500EC0730 /* CarouselView.swift in Sources */,
 				66E26A2D2B7CD4A900795400 /* SimilarMovieCell.swift in Sources */,
 				662EED8F2B778A2100470192 /* CustomButton.swift in Sources */,
+				66249E392CB66E38005A4A1A /* ThemeColors.swift in Sources */,
 				6641ADF22CB3C5E60021D7E0 /* XButtonCollectionCell.swift in Sources */,
 				66C006982B63A9E70056830B /* FavoriteViewController.swift in Sources */,
 				66C3EFAF2B7629D2005F57B7 /* UIView+Ext.swift in Sources */,
