@@ -30,7 +30,7 @@ class SelectProfileViewModel: SelectProfileViewModelProtocol {
             users = try context.fetch(fetchRequest)
             self.delegate?.handleOutput(.fetchUsers(users))
         } catch {
-            print("Error fetching users: \(error)")
+            self.delegate?.handleOutput(.error(error as! MovieError))
         }
     }
     
@@ -38,7 +38,7 @@ class SelectProfileViewModel: SelectProfileViewModelProtocol {
         do {
             try context.save()
         } catch {
-            print("Failed to save context: \(error)")
+            self.delegate?.handleOutput(.error(error as! MovieError))
         }
     }
     

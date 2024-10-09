@@ -66,58 +66,34 @@ final class MovieDetailViewModel: MovieDetailViewModelProtocol{
     }
     
     
-    @objc func addFavMovie() {
-        PersistenceManager.updateWith(favorite: movie!, actionType: .add) { [weak self] (error: MovieError?) in
-            guard let self = self else { return }
-            if let error = error {
-                self.delegate?.handleOutput(.error(error))
-            } else {
-                self.delegate?.handleOutput(.addFavMovie)
-            }
-        }
+    func addFavMovie(userId: String, movieId: Int) {
+        CoreDataManager.shared.likeMovie(userId: userId, movieId: movieId)
     }
     
     
-    @objc func removeFavMovie() {
-        PersistenceManager.updateWith(favorite: movie!, actionType: .remove) { [weak self] (error: MovieError?) in
-            guard let self = self else { return }
-            if let error = error {
-                self.delegate?.handleOutput(.error(error))
-            } else {
-                self.delegate?.handleOutput(.removeFavMovie)
-            }
+    func removeFavMovie(userId: String, movieId: Int) {
+        do{
+            try CoreDataManager.shared.removeLikedMovie(userId: userId, movieId: movieId)
+        } catch {
+            self.delegate?.handleOutput(.error(.serializationError))
         }
     }
     
-    
-    func checkMovieIsSaved() {
-        if let movie = self.movie {
-            PersistenceManager.isSaved(favorite: movie) { [weak self] result in
-                guard let self = self else { return }
-                switch result {
-                case .success(let isSaved):
-                    if isSaved {
-                        let image = SFSymbols.selectedFavorites
-                        let action = #selector(removeFavMovie)
-                        self.delegate?.handleOutput(.configureFavButton(image!, action))
-                    } else {
-                        let image = SFSymbols.favorites
-                        let action = #selector(addFavMovie)
-                        self.delegate?.handleOutput(.configureFavButton(image!, action))
-                    }
-                case .failure(let error):
-                    self.delegate?.handleOutput(.error(error))
-                }
-            }
+    func checkIsLiked(userId: String, movieId: Int) -> Bool{
+        do {
+            return try CoreDataManager.shared.isMovieInLike(userId: userId, movieId: movieId)
+        } catch {
+            self.delegate?.handleOutput(.error(.serializationError))
+            return false
         }
     }
     
-    
-    func infoButtonTapped() {
-        if let movie = movie {
-            if let url = URL(string:movie.homepage ?? "") {
-                self.delegate?.handleOutput(.infoButtonTapped(url))
-            }
+    func checkIsDisliked(userId: String, movieId: Int) -> Bool{
+        do {
+            return try CoreDataManager.shared.isMovieInDislike(userId: userId, movieId: movieId)
+        } catch {
+            self.delegate?.handleOutput(.error(.serializationError))
+            return false
         }
     }
     
@@ -136,6 +112,27 @@ final class MovieDetailViewModel: MovieDetailViewModelProtocol{
                         }
                     }
                 }
+        }
+    }
+    
+    func isInMyList(movieId: Int, userId: String) -> Bool {
+        do{
+            return try CoreDataManager.shared.isMovieInMyList(userId: userId, movieId: movieId)
+        } catch {
+            self.delegate?.handleOutput(.error(.serializationError))
+            return false
+        }
+    }
+    
+    func addList(movieId: Int, userId: String) {
+        do{
+            if try !CoreDataManager.shared.isMovieInMyList(userId: userId, movieId: movieId) {
+                CoreDataManager.shared.addMyList(userId: userId, movieId: movieId)
+            } else {
+               try CoreDataManager.shared.removeMyList(userId: userId, movieId: movieId)
+            }
+        } catch {
+            self.delegate?.handleOutput(.error(.invalidResponse))
         }
     }
 }

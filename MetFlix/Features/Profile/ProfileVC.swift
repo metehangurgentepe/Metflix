@@ -17,7 +17,7 @@ class ProfileVC: UIViewController, HomeVCCarouselDelegate {
         return label
     }()
     
-    let headerView: UIView = {
+    lazy var headerView: UIView = {
         let view = UIStackView()
         
         let label = UILabel()
@@ -42,7 +42,7 @@ class ProfileVC: UIViewController, HomeVCCarouselDelegate {
         label.attributedText = completeString
         
         let image = UIImageView()
-        image.image = UIImage(named: "avatar1")
+        image.image = self.navigationController?.tabBarController?.tabBar.items?[2].image
         image.layer.cornerRadius = 10
         image.clipsToBounds = true
         image.contentMode = .scaleAspectFit
@@ -58,9 +58,9 @@ class ProfileVC: UIViewController, HomeVCCarouselDelegate {
         return view
     }()
     
-    let titleStackView: UIStackView = {
+    lazy var titleStackView: UIStackView = {
         let image = UIImageView()
-        image.image = UIImage(named: "avatar1")
+        image.image = self.navigationController?.tabBarController?.tabBar.items?[2].image
         image.layer.cornerRadius = 4
         image.clipsToBounds = true
         image.contentMode = .scaleAspectFit

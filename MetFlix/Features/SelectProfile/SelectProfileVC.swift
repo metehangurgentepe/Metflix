@@ -19,7 +19,6 @@ class SelectProfileVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViewController()
-        
         setupCollectionView()
         
         viewModel.delegate = self
@@ -91,7 +90,6 @@ extension SelectProfileVC: UICollectionViewDelegate, UICollectionViewDataSource,
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileCell.identifier, for: indexPath) as! ProfileCell
         cell.configure(name: profiles[indexPath.row].username ?? "", image: profiles[indexPath.row].imageName)
-        print(profiles[indexPath.row].username,"usernameler burada")
         return cell
     }
     
@@ -104,7 +102,10 @@ extension SelectProfileVC: UICollectionViewDelegate, UICollectionViewDataSource,
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        selectedProfile = (profiles[indexPath.row].username, profiles[indexPath.row].imageName) as! (String, String)
+        let selectedUser = profiles[indexPath.row]
+        UserSession.shared.userId = selectedUser.userID?.uuidString
+        
+        selectedProfile = (selectedUser.username, selectedUser.imageName) as! (String, String)
         
         goToMainTabBar()
     }

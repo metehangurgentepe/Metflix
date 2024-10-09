@@ -26,7 +26,7 @@ class CoreDataManager {
         return persistentContainer.viewContext
     }
     
-    func saveContext() {
+    func saveContext(){
         if context.hasChanges {
             do {
                 try context.save()
@@ -39,30 +39,86 @@ class CoreDataManager {
     
     // MARK: - UserList Operations
     
-    func addToUserList(username: String, movieId: Int, imageName: String) -> User? {
+    func addToUserList(username: String, imageName: String) -> User? {
         let userList = User(context: context)
         userList.userID = UUID()
         userList.username = username
         userList.dateAdded = Date()
         userList.imageName = imageName
         
+        print("Generated UUID: \(UUID())")
+        print("Current Date: \(Date())")
+
+        
         saveContext()
         return userList
     }
     
-    func fetchUserList(for userId: String) -> [User] {
+    func fetchUserList(for userId: String) throws -> [User] {
         let request: NSFetchRequest<User> = User.fetchRequest()
         request.predicate = NSPredicate(format: "userId == %@", userId as CVarArg)
         
         do {
             return try context.fetch(request)
         } catch {
-            print("Error fetching user list: \(error)")
             return []
         }
     }
     
+    // MARK: - MyList Operations
+    func addMyList(userId: String, movieId: Int) -> MyList? {
+        let myList = MyList(context: context)
+        myList.userId = userId
+        myList.movieId = Int64(movieId)
+        
+        saveContext()
+        return myList
+    }
+    
+    func removeMyList(userId: String, movieId: Int) throws {
+        let request: NSFetchRequest<MyList> = MyList.fetchRequest()
+        request.predicate = NSPredicate(format: "userId == %@ AND movieId == %@", userId as CVarArg, NSNumber(value: movieId))
+        
+        do {
+            let results = try context.fetch(request)
+            for myList in results {
+                context.delete(myList)
+            }
+            saveContext()
+        } catch {
+            print("Error removing MyList: \(error)")
+            throw MovieError.invalidResponse
+        }
+    }
+    
+    func isMovieInMyList(userId: String, movieId: Int) throws -> Bool {
+        let request: NSFetchRequest<MyList> = MyList.fetchRequest()
+        request.predicate = NSPredicate(format: "userId == %@ AND movieId == %d", userId, Int64(movieId))
+        
+        do {
+            let results = try context.fetch(request)
+            return !results.isEmpty
+        } catch {
+            print("Error fetching MyList: \(error)")
+            throw MovieError.invalidResponse
+        }
+    }
+    
+    
     // MARK: - LikedMovie Operations
+    
+    func isMovieInLike(userId: String, movieId: Int) throws -> Bool {
+        let request: NSFetchRequest<LikedMovie> = LikedMovie.fetchRequest()
+        request.predicate = NSPredicate(format: "userId == %@ AND movieId == %d", userId, Int64(movieId))
+        
+        do {
+            let results = try context.fetch(request)
+            return !results.isEmpty
+        } catch {
+            print("Error fetching MyList: \(error)")
+            throw MovieError.invalidResponse
+        }
+    }
     
     func likeMovie(userId: String, movieId: Int) -> LikedMovie? {
         let likedMovie = LikedMovie(context: context)
@@ -74,10 +130,10 @@ class CoreDataManager {
         return likedMovie
     }
     
-    func removeLikedMovie(userId: String, movieId: Int) {
+    func removeLikedMovie(userId: String, movieId: Int) throws{
         let request: NSFetchRequest<LikedMovie> = LikedMovie.fetchRequest()
-        request.predicate = NSPredicate(format: "userId == %@ AND movieId == %@", userId as CVarArg, movieId as CVarArg)
-        
+        request.predicate = NSPredicate(format: "userId == %@ AND movieId == %d", userId, Int64(movieId))
+
         do {
             let results = try context.fetch(request)
             for likedMovie in results {
@@ -85,7 +141,7 @@ class CoreDataManager {
             }
             saveContext()
         } catch {
-            print("Error removing liked movie: \(error)")
+            throw MovieError.invalidResponse
         }
     }
     
@@ -103,7 +159,7 @@ class CoreDataManager {
         return downloadedMovie
     }
     
-    func removeDownloadedMovie(userId: String, movieId: Int) {
+    func removeDownloadedMovie(userId: String, movieId: Int) throws{
         let request: NSFetchRequest<DownloadedMovie> = DownloadedMovie.fetchRequest()
         request.predicate = NSPredicate(format: "userId == %@ AND movieId == %@", userId as CVarArg, movieId as CVarArg)
         
@@ -114,7 +170,7 @@ class CoreDataManager {
             }
             saveContext()
         } catch {
-            print("Error removing downloaded movie: \(error)")
+            throw MovieError.invalidResponse
         }
     }
     
@@ -130,7 +186,7 @@ class CoreDataManager {
         return dislikedMovie
     }
     
-    func removeDislikedMovie(userId: String, movieId: Int) {
+    func removeDislikedMovie(userId: String, movieId: Int) throws {
         let request: NSFetchRequest<DislikedMovie> = DislikedMovie.fetchRequest()
         request.predicate = NSPredicate(format: "userId == %@ AND movieId == %@", userId as CVarArg, movieId as CVarArg)
         
@@ -141,7 +197,7 @@ class CoreDataManager {
             }
             saveContext()
         } catch {
-            print("Error removing disliked movie: \(error)")
+            throw MovieError.invalidResponse
         }
     }
     
@@ -152,8 +208,20 @@ class CoreDataManager {
         do {
             return try context.fetch(request)
         } catch {
-            print("Error fetching disliked movies: \(error)")
             return []
+        }
+    }
+    
+    func isMovieInDislike(userId: String, movieId: Int) throws -> Bool {
+        let request: NSFetchRequest<DislikedMovie> = DislikedMovie.fetchRequest()
+        request.predicate = NSPredicate(format: "userId == %@ AND movieId == %d", userId, Int64(movieId))
+        
+        do {
+            let results = try context.fetch(request)
+            return !results.isEmpty
+        } catch {
+            print("Error fetching MyList: \(error)")
+            throw MovieError.invalidResponse
         }
     }
 }

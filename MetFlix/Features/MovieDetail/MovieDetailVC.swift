@@ -127,6 +127,8 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         button.layer.cornerRadius = 13
         return button
     }()
+    let likeButton = VerticalButton(frame: .zero)
+    let dislikeButton = VerticalButton(frame: .zero)
     
     lazy var menuView = menuController.view!
     let listButton = VerticalButton(frame: .zero)
@@ -143,6 +145,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
     var recommendedMovies: [Movie] = []
     var viewModel: MovieDetailViewModel?
     weak var delegate: MovieDetailControllerDelegate?
+    let currentUserId = UserSession.shared.userId
     
     private var originalCenter: CGPoint = .zero
     private let threshold: CGFloat = 100
@@ -157,6 +160,25 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
             await viewModel?.getRecommendedMovies()
         }
         
+        design()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        menuController.collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .centeredHorizontally)
+    }
+    
+    init(id: Int) {
+        super.init(nibName: nil, bundle:nil)
+        self.movieId = id
+        self.viewModel = MovieDetailViewModel(id: id)
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: createFlowLayout())
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func design() {
         configureViewController()
         configureImageView()
         configureXButton()
@@ -175,21 +197,6 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hidePopover))
         overlayView.addGestureRecognizer(tapGesture)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        menuController.collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .centeredHorizontally)
-    }
-    
-    init(id: Int) {
-        super.init(nibName: nil, bundle:nil)
-        self.movieId = id
-        self.viewModel = MovieDetailViewModel(id: id)
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: createFlowLayout())
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     private func setupPanGesture() {
@@ -456,15 +463,6 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         }
     }
     
-    @objc func infoButtonTapped() {
-        viewModel?.infoButtonTapped()
-    }
-    
-    func configureFavButtonItem() {
-        self.favButton.target = self
-        viewModel?.checkMovieIsSaved()
-    }
-    
     func configureMovieInfoView() {
         movieInfoView.snp.makeConstraints { make in
             make.top.equalTo(stackView.snp.top).offset(10)
@@ -500,8 +498,13 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
     }
     
     @objc func listButtonTapped() {
+        guard let id = movie?.id, let userId = currentUserId else { return }
+        
         listButton.animatedRotation()
+        
+        viewModel?.addList(movieId: id, userId: userId)
     }
+
     
     private func setupPopover() {
         overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.8)
@@ -516,17 +519,16 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         popoverView.layer.cornerRadius = 40
         popoverView.isHidden = true
         
-        let button1 = VerticalButton(frame: .zero)
-        button1.verticalImage = UIImage(systemName: "hand.thumbsdown")
-        button1.verticalTitle = "Bunu sevmedim"
-        button1.addTarget(self, action: #selector(hidePopover), for: .touchUpInside)
+        self.dislikeButton.verticalImage = (viewModel?.checkIsDisliked(userId: currentUserId ?? "", movieId: movie?.id ?? 0))! ? UIImage(systemName: "hand.thumbsdown.fill") : UIImage(systemName: "hand.thumbsdown")
+        dislikeButton.verticalTitle = "Bunu sevmedim"
+        dislikeButton.addTarget(self, action: #selector(dislikeMovie), for: .touchUpInside)
         
-        let button2 = VerticalButton(frame: .zero)
-        button2.verticalImage = UIImage(systemName: "hand.thumbsup")
-        button2.verticalTitle = "Buna bayıldım"
-        button2.addTarget(self, action: #selector(hidePopover), for: .touchUpInside)
         
-        let buttonStackView = UIStackView(arrangedSubviews: [button1, button2])
+        self.likeButton.verticalImage = (viewModel?.checkIsLiked(userId: currentUserId ?? "", movieId: movie?.id ?? 0))! ? UIImage(systemName: "hand.thumbsup.fill") : UIImage(systemName: "hand.thumbsup")
+        likeButton.verticalTitle = "Buna bayıldım"
+        likeButton.addTarget(self, action: #selector(likeMovie), for: .touchUpInside)
+        
+        let buttonStackView = UIStackView(arrangedSubviews: [dislikeButton, likeButton])
         buttonStackView.axis = .horizontal
         buttonStackView.spacing = 10
         popoverView.addSubview(buttonStackView)
@@ -546,6 +548,32 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
             make.width.equalTo(200)
             make.height.equalTo(100)
         }
+    }
+    
+    @objc func likeMovie() {
+        guard let currentUserId = currentUserId, let id = movie?.id else { return }
+        
+        let bool = viewModel?.checkIsLiked(userId: currentUserId, movieId: id)
+        
+        if bool! {
+            viewModel?.removeFavMovie(userId: currentUserId, movieId: id)
+        } else {
+            viewModel?.addFavMovie(userId: currentUserId, movieId: id)
+        }
+        hidePopover()
+    }
+    
+    @objc func dislikeMovie() {
+        guard let currentUserId = currentUserId, let id = movie?.id else { return }
+        
+        let bool = viewModel?.checkIsLiked(userId: currentUserId, movieId: id)
+        
+        if bool! {
+            viewModel?.removeFavMovie(userId: currentUserId, movieId: id)
+        } else {
+            viewModel?.addFavMovie(userId: currentUserId, movieId: id)
+        }
+        hidePopover()
     }
     
     @objc func hidePopover() {
@@ -570,12 +598,14 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
     }
     
     @objc func removeFavMovie() {
-        viewModel?.removeFavMovie()
+        guard let currentUserId = currentUserId, let id = movie?.id else { return }
+        viewModel?.removeFavMovie(userId: currentUserId, movieId: id)
     }
     
     
     @objc func addFavMovie() {
-        viewModel?.addFavMovie()
+        guard let currentUserId = currentUserId, let id = movie?.id else { return }
+        viewModel?.addFavMovie(userId: currentUserId, movieId: id)
     }
     
     func add(childVC: UIViewController, to containerView: UIView) {
@@ -644,7 +674,9 @@ extension MovieDetailVC: MovieDetailViewModelDelegate{
                 self.overviewLabel.text = movie.overview
                 self.castLabel.text = "Cast Crew: " + (movie.cast?.map({ $0.name }).joined(separator: ", ") ?? "")
                 self.directorsLabel.text = "Director: " + (movie.directors?.map({ $0.name }).joined(separator: ", ") ?? "")
-                self.configureFavButtonItem()
+                
+                self.listButton.verticalImage = (viewModel?.isInMyList(movieId: movie.id, userId: currentUserId ?? ""))! ? UIImage(systemName: "checkmark") : UIImage(systemName: "plus")
+                
                 
             case .setLoading(let bool):
                 switch bool {
@@ -665,15 +697,16 @@ extension MovieDetailVC: MovieDetailViewModelDelegate{
                 self.showMovies = movies
                 self.updatedData(on: self.similarMovies)
                 
+                
             case .didTapPlayButton(let videoURL):
                 presentSafariVC(with: videoURL)
                 
                 
             case .addFavMovie:
-                configureFavButtonItem()
+                break
                 
             case .removeFavMovie:
-                configureFavButtonItem()
+                break
                 
             case .infoButtonTapped(let url):
                 presentSafariVC(with: url)

@@ -6,3 +6,11 @@
 //
 
 import Foundation
+
+class UserSession {
+    static let shared = UserSession()
+    
+    var userId: String?
+    
+    private init() {} 
+}
