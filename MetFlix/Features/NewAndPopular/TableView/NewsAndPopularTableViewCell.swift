@@ -39,13 +39,9 @@ class NewsAndPopularTableViewCell: UITableViewCell {
     }()
     
     lazy var remindMeButton = VerticalButton()
-    
     lazy var infoButton = VerticalButton()
-    
     lazy var recommendedButton = VerticalButton(frame: .zero)
-    
     lazy var addListButton = VerticalButton()
-    
     lazy var playButton = VerticalButton()
     
     
@@ -93,22 +89,7 @@ class NewsAndPopularTableViewCell: UITableViewCell {
     }
     
     private func setupLayout() {
-        remindMeButton.verticalImage = UIImage(systemName: "bell")
-        remindMeButton.verticalTitle = "Remind Me"
-        
-        infoButton.verticalImage = UIImage(systemName: "info.circle")
-        infoButton.verticalTitle = "Info"
-        
-        recommendedButton.verticalImage = UIImage(systemName: "paperplane")
-        recommendedButton.verticalTitle = "Recommend"
-        
-        playButton.verticalImage = UIImage(systemName: "play.fill")
-        playButton.verticalTitle = "Play"
-        
-        addListButton.verticalImage = UIImage(systemName: "plus")
-        addListButton.verticalTitle = "My List"
-        
-        buttonStackView.spacing = 4
+        setupButtons()
         
         contentView.addSubview(thumbnailImageView)
         contentView.addSubview(titleLabel)
@@ -133,17 +114,17 @@ class NewsAndPopularTableViewCell: UITableViewCell {
         }
         
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(thumbnailImageView.snp.bottom).offset(4)
+            make.top.equalTo(thumbnailImageView.snp.bottom).offset(8)
             make.leading.equalTo(productTitleLabel.snp.leading)
             make.width.equalTo(120)
             make.height.lessThanOrEqualTo(50)
         }
         
         buttonStackView.snp.makeConstraints { make in
-            make.top.equalTo(thumbnailImageView.snp.bottom).offset(4)
-            make.leading.equalTo(titleLabel.snp.trailing).offset(10)
+            make.top.equalTo(thumbnailImageView.snp.bottom).offset(8)
+            make.leading.equalTo(titleLabel.snp.trailing).offset(20)
             make.trailing.equalToSuperview()
-            make.height.equalTo(50)
+            make.height.equalTo(40)
         }
         
         productTitleLabel.snp.makeConstraints { make in
@@ -166,6 +147,25 @@ class NewsAndPopularTableViewCell: UITableViewCell {
             make.trailing.equalToSuperview()
             make.height.equalTo(20)
         }
+    }
+    
+    private func setupButtons() {
+        remindMeButton.verticalImage = UIImage(systemName: "bell")
+        remindMeButton.verticalTitle = "Remind Me"
+        
+        infoButton.verticalImage = UIImage(systemName: "info.circle")
+        infoButton.verticalTitle = "Info"
+        
+        recommendedButton.verticalImage = UIImage(systemName: "paperplane")
+        recommendedButton.verticalTitle = "Recommend"
+        
+        playButton.verticalImage = UIImage(systemName: "play.fill")
+        playButton.verticalTitle = "Play"
+        
+        addListButton.verticalImage = UIImage(systemName: "plus")
+        addListButton.verticalTitle = "My List"
+        
+        buttonStackView.spacing = 4
     }
     
     func configure(movie: Movie?, index: Int?, wide: Bool, upcoming: Bool, series: Series?) {

@@ -117,25 +117,16 @@ class ProfileVC: DataLoadingVC, HomeVCCarouselDelegate {
         configureTableView()
         
         viewModel.delegate = self
-        
-        Task{
-            await viewModel.loadData()
-        }
     }
     
     
-    override func viewDidDisappear(_ animated: Bool) {
-        Task{
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        Task {
             await viewModel.loadData()
         }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
         
-//        Task{
-//            await viewModel.loadData()
-//        }
+        navigationController?.tabBarController?.tabBar.isHidden = false
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -160,6 +151,7 @@ class ProfileVC: DataLoadingVC, HomeVCCarouselDelegate {
         let searchItem = UIButton()
         searchItem.setImage(UIImage(systemName: "magnifyingglass")?.resized(to: .init(width: 25, height: 25)).withRenderingMode(.alwaysTemplate), for: .normal)
         searchItem.tintColor = .white
+        searchItem.addTarget(self, action: #selector(searchItemTapped), for: .touchUpInside)
         
         let settingsItem = UIButton()
         settingsItem.setImage(UIImage(systemName: "line.3.horizontal")?.resized(to: .init(width: 35, height: 35)).withRenderingMode(.alwaysTemplate), for: .normal)
@@ -193,6 +185,11 @@ class ProfileVC: DataLoadingVC, HomeVCCarouselDelegate {
     private func headerTableView() {
         headerView.frame = CGRect(x: 0, y: 0, width: ScreenSize.width * 0.9, height: 100)
         tableView.tableHeaderView = headerView
+    }
+    
+    @objc func searchItemTapped() {
+        let vc = SuggestedSearchViewController()
+        self.navigationController?.pushViewController(vc, animated: false)
     }
 }
 

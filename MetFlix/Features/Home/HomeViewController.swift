@@ -56,8 +56,6 @@ class HomeViewController: DataLoadingVC, HomeVCCarouselDelegate, HomeTitleViewDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        let movie = MovieEntity()
-        
         navigationController?.navigationBar.isHidden = true
         
         view.backgroundColor = .systemBackground
@@ -350,7 +348,7 @@ extension HomeViewController: MovieListViewModelDelegate {
             case .selectMovie(let id):
                 let destVC = MovieDetailVC(id: id)
                 destVC.transitioningDelegate = self
-                destVC.modalPresentationStyle = .overFullScreen
+                destVC.modalPresentationStyle = .automatic
                 destVC.delegate = self
                 
                 setBlurView()

@@ -97,16 +97,16 @@ class TopRatedCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(movie: Movie, rank: Int) {
-        posterImageView.sd_setImage(with: movie.posterURL)
+        posterImageView.sd_setImage(with: movie.lowResolutionPosterURL)
 
         self.rankString = "\(rank)"
         
         if rankString!.count == 1 {
-            firstDigitLabel.text = rankString // Tek rakamı birinci label'a ekle
-            secondDigitLabel.text = "" // İkinci label boş kalsın
+            firstDigitLabel.text = rankString
+            secondDigitLabel.text = ""
         } else if rankString!.count == 2 {
-            firstDigitLabel.text = String(rankString!.first!) // Birinci rakam
-            secondDigitLabel.text = String(rankString!.last!) // İkinci rakam
+            firstDigitLabel.text = String(rankString!.first!)
+            secondDigitLabel.text = String(rankString!.last!)
         }
     }
 }

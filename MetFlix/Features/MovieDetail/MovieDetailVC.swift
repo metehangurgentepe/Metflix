@@ -280,7 +280,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         view.addSubview(imageView)
         
         imageView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.top.equalTo(view.snp.top)
             make.leading.trailing.equalTo(view)
             make.height.equalTo(imageHeight)
         }
@@ -375,6 +375,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         playButton.snp.makeConstraints { make in
             make.centerX.equalTo(imageView.snp.centerX)
             make.centerY.equalTo(imageView.snp.centerY)
+            make.width.height.equalTo(50)
         }
     }
     
@@ -451,7 +452,7 @@ class MovieDetailVC: DataLoadingVC, UIScrollViewDelegate, MenuDetailControllerDe
         scrollView.delegate = self
         
         scrollView.snp.makeConstraints { make in
-            make.top.equalTo(imageView.snp.bottom).offset(10)
+            make.top.equalTo(imageView.snp.bottom)
             make.leading.trailing.bottom.equalToSuperview()
         }
     }
