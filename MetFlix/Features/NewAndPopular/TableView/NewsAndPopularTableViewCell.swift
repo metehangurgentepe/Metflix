@@ -186,7 +186,7 @@ class NewsAndPopularTableViewCell: UITableViewCell {
         }
         
         titleLabel.text = movie.title
-        thumbnailImageView.sd_setImage(with: movie.posterURL)
+        thumbnailImageView.sd_setImage(with: movie.backdropURL)
         overviewLabel.text = movie.overview
         productTitleLabel.text = movie.title
         

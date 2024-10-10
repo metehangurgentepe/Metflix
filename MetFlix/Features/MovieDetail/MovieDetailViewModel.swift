@@ -4,135 +4,159 @@
 //
 //  Created by Metehan Gürgentepe on 26.01.2024.
 //
-
 import Foundation
 import UIKit
 import SDWebImage
 
-
-final class MovieDetailViewModel: MovieDetailViewModelProtocol{
+final class MovieDetailViewModel: MovieDetailViewModelProtocol {
     var delegate: MovieDetailViewModelDelegate?
-    var id: Int
-    var movie: Movie?
+    private let id: Int
+    private var movie: Movie?
+    private let movieStore: MovieService
+    private let coreDataManager: CoreDataManagerProtocol
+    private let imageLoader: ImageLoaderProtocol
     
-    
-    init(id: Int) {
+    init(id: Int,
+         movieStore: MovieService = MovieStore.shared,
+         coreDataManager: CoreDataManagerProtocol = CoreDataManager.shared,
+         imageLoader: ImageLoaderProtocol = SDWebImageLoader()
+    ){
         self.id = id
+        self.movieStore = movieStore
+        self.coreDataManager = coreDataManager
+        self.imageLoader = imageLoader
     }
     
-    func load() async{
-        self.delegate?.handleOutput(.setLoading(true))
-        do{
-            self.movie = try await MovieStore.shared.fetchMovieDetail(id: id)
-            self.movie?.credits = try await MovieStore.shared.fetchMovieCredits(id: id)
-            self.delegate?.handleOutput(.getDetail(self.movie!))
-            downloadImage()
-        } catch {
-            self.delegate?.handleOutput(.error(error as! MovieError))
-        }
-        self.delegate?.handleOutput(.setLoading(false))
-    }
-    
-    func getRecommendedMovies() async{
-        do{
-            let movies = try await MovieStore.shared.fetchRecommendedMovies(from: .recommended, id: id).results
-            self.delegate?.handleOutput(.getRecommendedMovies(movies))
-        } catch {
-            self.delegate?.handleOutput(.error(error as! MovieError))
-        }
-    }
-    
-    
-    func getSimilarMovies() async{
-        do{
-            let movies = try await MovieStore.shared.getSimilarMovies(id: id).results
-            self.delegate?.handleOutput(.getSimilarMovie(movies))
-        } catch {
-            self.delegate?.handleOutput(.error(error as! MovieError))
-        }
-    }
-    
-    
-    func fetchMovieVideo() async{
-        do{
-            let video = try await MovieStore.shared.fetchMovieVideo(id: id).results
-            let videoURLKey = video[0].key
-            if let url = URL(string:"https://youtube.com/watch?v=\(videoURLKey)") {
-                self.delegate?.handleOutput(.didTapPlayButton(url))
+    @MainActor
+    func load() async {
+        delegate?.handleOutput(.setLoading(true))
+        do {
+            async let movieDetail = movieStore.fetchMovieDetail(id: id)
+            async let movieCredits = movieStore.fetchMovieCredits(id: id)
+            
+            let (detail, credits) = await (try movieDetail, try movieCredits)
+            movie = detail
+            movie?.credits = credits
+            
+            if let movie = movie {
+                delegate?.handleOutput(.getDetail(movie))
+                downloadImage(for: movie)
             }
         } catch {
-            self.delegate?.handleOutput(.error(error as! MovieError))
+            handleError(error)
+        }
+        delegate?.handleOutput(.setLoading(false))
+    }
+    
+    @MainActor
+    func getRecommendedMovies() async {
+        do {
+            let movies = try await movieStore.fetchRecommendedMovies(from: .recommended, id: id).results
+            delegate?.handleOutput(.getRecommendedMovies(movies))
+        } catch {
+            handleError(error)
         }
     }
     
+    @MainActor
+    func getSimilarMovies() async {
+        do {
+            let movies = try await movieStore.getSimilarMovies(id: id).results
+            delegate?.handleOutput(.getSimilarMovie(movies))
+        } catch {
+            handleError(error)
+        }
+    }
+    
+    @MainActor
+    func fetchMovieVideo() async {
+        do {
+            let videos = try await movieStore.fetchMovieVideo(id: id).results
+            if let videoURLKey = videos.first?.key,
+               let url = URL(string: "https://youtube.com/watch?v=\(videoURLKey)") {
+                delegate?.handleOutput(.didTapPlayButton(url))
+            }
+        } catch {
+            handleError(error)
+        }
+    }
     
     func addFavMovie(userId: String, movieId: Int) {
-        CoreDataManager.shared.likeMovie(userId: userId, movieId: movieId)
+        coreDataManager.likeMovie(userId: userId, movieId: movieId)
     }
-    
     
     func removeFavMovie(userId: String, movieId: Int) {
-        do{
-            try CoreDataManager.shared.removeLikedMovie(userId: userId, movieId: movieId)
-        } catch {
-            self.delegate?.handleOutput(.error(.serializationError))
-        }
-    }
-    
-    func checkIsLiked(userId: String, movieId: Int) -> Bool{
         do {
-            return try CoreDataManager.shared.isMovieInLike(userId: userId, movieId: movieId)
+            try coreDataManager.unlikeMovie(userId: userId, movieId: movieId)
         } catch {
-            self.delegate?.handleOutput(.error(.serializationError))
-            return false
+            handleError(error)
         }
     }
     
-    func checkIsDisliked(userId: String, movieId: Int) -> Bool{
-        do {
-            return try CoreDataManager.shared.isMovieInDislike(userId: userId, movieId: movieId)
-        } catch {
-            self.delegate?.handleOutput(.error(.serializationError))
-            return false
-        }
+    func checkIsLiked(userId: String, movieId: Int) -> Bool {
+        coreDataManager.isMovieLiked(userId: userId, movieId: movieId)
     }
     
-    
-    func downloadImage() {
-        if let movie = self.movie {
-            SDWebImageManager.shared.loadImage(
-                with: movie.backdropURL,
-                options: .highPriority,
-                progress: nil) { (image, data, error, cacheType, isFinished, imageUrl) in
-                    if let image = image {
-                        self.delegate?.handleOutput(.downloadImage(image))
-                    } else {
-                        if let error = error{
-                            self.delegate?.handleOutput(.error(error as! MovieError))
-                        }
-                    }
-                }
-        }
+    func checkIsDisliked(userId: String, movieId: Int) -> Bool {
+        coreDataManager.isMovieDisliked(userId: userId, movieId: movieId)
     }
     
     func isInMyList(movieId: Int, userId: String) -> Bool {
-        do{
-            return try CoreDataManager.shared.isMovieInMyList(userId: userId, movieId: movieId)
-        } catch {
-            self.delegate?.handleOutput(.error(.serializationError))
-            return false
-        }
+        coreDataManager.isMovieInMyList(userId: userId, movieId: movieId)
     }
     
     func addList(movieId: Int, userId: String) {
-        do{
-            if try !CoreDataManager.shared.isMovieInMyList(userId: userId, movieId: movieId) {
-                CoreDataManager.shared.addMyList(userId: userId, movieId: movieId)
+        do {
+            if !coreDataManager.isMovieInMyList(userId: userId, movieId: movieId) {
+                coreDataManager.addToMyList(userId: userId, movieId: movieId)
             } else {
-               try CoreDataManager.shared.removeMyList(userId: userId, movieId: movieId)
+                try coreDataManager.removeFromMyList(userId: userId, movieId: movieId)
             }
         } catch {
-            self.delegate?.handleOutput(.error(.invalidResponse))
+            handleError(error)
+        }
+    }
+    
+    private func downloadImage(for movie: Movie) {
+        imageLoader.loadImage(with: movie.backdropURL) { [weak self] result in
+            switch result {
+            case .success(let image):
+                self?.delegate?.handleOutput(.downloadImage(image))
+            case .failure(let error):
+                self?.handleError(error)
+            }
+        }
+    }
+    
+    private func handleError(_ error: Error) {
+        let movieError = (error as? MovieError) ?? .apiError
+        delegate?.handleOutput(.error(movieError))
+    }
+}
+
+protocol ImageLoaderProtocol {
+    func loadImage(with url: URL?, completion: @escaping (Result<UIImage, Error>) -> Void)
+}
+
+class SDWebImageLoader: ImageLoaderProtocol {
+    func loadImage(with url: URL?, completion: @escaping (Result<UIImage, Error>) -> Void) {
+        guard let url = url else {
+            completion(.failure(MovieError.serializationError))
+            return
+        }
+        
+        SDWebImageManager.shared.loadImage(
+            with: url,
+            options: .highPriority,
+            progress: nil
+        ) { (image, _, error, _, _, _) in
+            if let image = image {
+                completion(.success(image))
+            } else if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.failure(MovieError.serializationError))
+            }
         }
     }
 }

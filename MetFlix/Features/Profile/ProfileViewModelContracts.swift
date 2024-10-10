@@ -7,12 +7,10 @@
 
 import Foundation
 
-protocol ProfileViewModelProtocol {
+protocol ProfileViewModelProtocol: AnyObject {
     var delegate: ProfileViewModelDelegate? { get set }
-    func loadLikedMovies() async
-    func loadMyList() async
+    func loadData() async
     func selectMovie(id: Int)
-    func tappedSeeAll(endpoint: MovieListEndpoint)
 }
 
 enum ProfileViewModelOutput {

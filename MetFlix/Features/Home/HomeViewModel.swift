@@ -7,10 +7,13 @@
 
 import Foundation
 
-
-class HomeViewModel: MovielistViewModelProtocol {
-    
+class HomeViewModel: @preconcurrency HomeViewModelProtocol {
     weak var delegate: MovieListViewModelDelegate?
+    
+    private var popularMovies: [Movie] = []
+    private var upcomingMovies: [Movie] = []
+    private var topRatedMovies: [Movie] = []
+    private var nowPlayingMovies: [Movie] = []
     
     @MainActor
     func load() {
@@ -20,33 +23,48 @@ class HomeViewModel: MovielistViewModelProtocol {
             guard let self = self else { return }
             
             do {
-                let popularList = try await MovieStore.shared.fetchMovies(from: .popular)
-                self.delegate?.handleOutput(.popular(popularList))
+                async let popularTask = self.fetchMovies(from: .popular)
+                async let upcomingTask = self.fetchMovies(from: .upcoming)
+                async let topRatedTask = self.fetchMovies(from: .topRated)
+                async let nowPlayingTask = self.fetchMovies(from: .nowPlaying)
                 
-                let upcomingList = try await MovieStore.shared.fetchMovies(from: .upcoming)
-                self.delegate?.handleOutput(.upcoming(upcomingList))
+                let (popular, upcoming, topRated, nowPlaying) = try await (popularTask, upcomingTask, topRatedTask, nowPlayingTask)
                 
-                let topRatedList = try await MovieStore.shared.fetchMovies(from: .topRated)
-                self.delegate?.handleOutput(.topRated(topRatedList))
-                
-                let nowPlayingList = try await MovieStore.shared.fetchMovies(from: .nowPlaying)
-                self.delegate?.handleOutput(.nowPlaying(nowPlayingList))
+                self.popularMovies = popular.results
+                self.upcomingMovies = upcoming.results
+                self.topRatedMovies = topRated.results
+                self.nowPlayingMovies = nowPlaying.results
                 
                 self.delegate?.handleOutput(.setLoading(false))
             } catch {
-                self.delegate?.handleOutput(.error(error as! MovieError))
-                self.delegate?.handleOutput(.setLoading(false))
+                self.delegate?.handleOutput(.error(.apiError))
             }
         }
     }
-    
     
     func selectMovie(id: Int) {
         delegate?.handleOutput(.selectMovie(id))
     }
     
-    
     func tappedSeeAll(endpoint: MovieListEndpoint) {
         delegate?.handleOutput(.tappedSeeAll(endpoint))
+    }
+    
+    func movies(for section: HomeViewController.Section?) -> [Movie] {
+        guard let section = section else { return [] }
+        switch section {
+        case .nowPlaying: return nowPlayingMovies
+        case .popular: return popularMovies
+        case .upcoming: return upcomingMovies
+        case .topRated: return topRatedMovies
+        }
+    }
+    
+    private func fetchMovies(from endpoint: MovieListEndpoint) async throws -> MovieResponse {
+        do {
+            return try await MovieStore.shared.fetchMovies(from: endpoint)
+        } catch {
+            throw MovieError.serializationError
+        }
     }
 }

@@ -7,11 +7,12 @@
 
 import Foundation
 
-protocol MovielistViewModelProtocol {
+protocol HomeViewModelProtocol: AnyObject {
     var delegate: MovieListViewModelDelegate? { get set }
     func load()
     func selectMovie(id: Int)
     func tappedSeeAll(endpoint: MovieListEndpoint)
+    func movies(for section: HomeViewController.Section?) -> [Movie]
 }
 
 enum MovieListViewModelOutput {

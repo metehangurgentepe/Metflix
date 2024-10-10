@@ -7,131 +7,89 @@
 
 import Foundation
 
-
+import Foundation
 
 class MovieStore: MovieService {
-    
     static let shared = MovieStore()
     
-    private init() {}
+    private let apiKey: String
+    private let baseAPIURL: String
+    private let urlSession: URLSession
+    private let jsonDecoder: JSONDecoder
     
-    private let apiKey = "1771d0ed4cb42b83b8b94fbe2102e24c"
-    private let baseAPIURL = "https://api.themoviedb.org/3"
-    private let urlSession = URLSession.shared
-    private let jsonDecoder = Utils.jsonDecoder
+    init(apiKey: String = "1771d0ed4cb42b83b8b94fbe2102e24c",
+         baseAPIURL: String = "https://api.themoviedb.org/3",
+         urlSession: URLSession = .shared,
+         jsonDecoder: JSONDecoder = Utils.jsonDecoder) {
+        self.apiKey = apiKey
+        self.baseAPIURL = baseAPIURL
+        self.urlSession = urlSession
+        self.jsonDecoder = jsonDecoder
+        self.jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
+    }
     
     func fetchMovies(from endpoint: MovieListEndpoint) async throws -> MovieResponse {
-        guard let url = URL(string: "\(baseAPIURL)/movie/\(endpoint.rawValue)?language=en-US") else {
-            throw MovieError.invalidEndpoint
-        }
-        return try await self.loadURLAndDecode(url: url, page: 1)
+        try await fetchResource(endpoint: "movie/\(endpoint.rawValue)", queryItems: ["language": "en-US"])
     }
     
     func fetchSeries(from endpoint: MovieListEndpoint) async throws -> SeriesResponse {
-        guard let url = URL(string: "\(baseAPIURL)/tv/\(endpoint.rawValue)") else {
-            throw MovieError.invalidEndpoint
-        }
-        return try await self.loadURLAndDecode(url: url, page: 1)
+        try await fetchResource(endpoint: "tv/\(endpoint.rawValue)")
     }
     
-    func fetchRecommendedMovies(from endpoint: MovieListEndpoint, id: Int?) async throws -> MovieResponse {
-        guard let url = URL(string: "\(baseAPIURL)/movie/\(id!)/\(endpoint.rawValue)") else {
-            throw MovieError.invalidEndpoint
-        }
-        return try await self.loadURLAndDecode(url: url)
+    func fetchRecommendedMovies(from endpoint: MovieListEndpoint, id: Int) async throws -> MovieResponse {
+        try await fetchResource(endpoint: "movie/\(id)/\(endpoint.rawValue)")
     }
     
-
     func fetchMoviesList(from endpoint: MovieListEndpoint, page: Int, id: Int?) async throws -> MovieResponse {
-        if endpoint.rawValue == "similar" && id != nil{
-            guard let url = URL(string: "\(baseAPIURL)/movie/\(id!)/\(endpoint.rawValue)?language=en-US") else {
-                throw MovieError.invalidEndpoint
-            }
-            return try await self.loadURLAndDecode(url: url, page: page)
-            
-        } else {
-            guard let url = URL(string: "\(baseAPIURL)/movie/\(endpoint.rawValue)?language=en-US") else {
-                throw MovieError.invalidEndpoint
-            }
-            return try await self.loadURLAndDecode(url: url, page: page)
-        }
+        let endpointString = id != nil ? "movie/\(id!)/\(endpoint.rawValue)" : "movie/\(endpoint.rawValue)"
+        return try await fetchResource(endpoint: endpointString, queryItems: ["language": "en-US", "page": "\(page)"])
     }
-    
     
     func fetchMovieDetail(id: Int) async throws -> Movie {
-        guard let url = URL(string: "\(baseAPIURL)/movie/\(id)") else {
-            throw MovieError.invalidEndpoint
-        }
-        return try await self.loadURLAndDecode(url: url)
+        try await fetchResource(endpoint: "movie/\(id)")
     }
     
     func fetchMovieCredits(id: Int) async throws -> MovieCredit {
-        guard let url = URL(string: "\(baseAPIURL)/movie/\(id)/credits") else {
-            throw MovieError.invalidEndpoint
-        }
-        return try await self.loadURLAndDecode(url: url)
+        try await fetchResource(endpoint: "movie/\(id)/credits")
     }
     
-    
-    func searchMovie(query: String) async throws -> MovieResponse{
-        guard let url = URL(string: "\(baseAPIURL)/search/movie") else {
-            throw MovieError.invalidEndpoint
-        }
-        return try await self.loadURLAndDecode(url: url, params: [
-            "language": "en-US",
-            "include_adult": "false",
-            "region": "US",
-            "query": query
-        ])
+    func searchMovie(query: String) async throws -> MovieResponse {
+        try await fetchResource(
+            endpoint: "search/movie",
+            queryItems: [
+                "language": "en-US",
+                "include_adult": "false",
+                "region": "US",
+                "query": query
+            ]
+        )
     }
     
-    
-    func getSimilarMovies(id:Int) async throws -> MovieResponse {
-        guard let url = URL(string: "\(baseAPIURL)/movie/\(id)/similar?language=en-US&page=1") else {
-            throw MovieError.invalidEndpoint
-        }
-        return try await self.loadURLAndDecode(url: url)
+    func getSimilarMovies(id: Int) async throws -> MovieResponse {
+        try await fetchResource(endpoint: "movie/\(id)/similar", queryItems: ["language": "en-US", "page": "1"])
     }
-    
     
     func fetchMovieVideo(id: Int) async throws -> MovieVideoModel {
-        guard let url = URL(string: "\(baseAPIURL)/movie/\(id)/videos?language=en-US") else {
-            throw MovieError.invalidEndpoint
-        }
-        return try await self.loadURLAndDecode(url: url)
+        try await fetchResource(endpoint: "movie/\(id)/videos", queryItems: ["language": "en-US"])
     }
     
-    
-    private func loadURLAndDecode<D: Decodable>(url: URL, params: [String: String]? = nil, page: Int? = nil) async throws -> D {
-        guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+    private func fetchResource<T: Decodable>(endpoint: String, queryItems: [String: String] = [:]) async throws -> T {
+        var components = URLComponents(string: "\(baseAPIURL)/\(endpoint)")
+        components?.queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
+        components?.queryItems?.append(contentsOf: queryItems.map { URLQueryItem(name: $0.key, value: $0.value) })
+        
+        guard let url = components?.url else {
             throw MovieError.invalidEndpoint
         }
-
-        var queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
         
-        if let params = params {
-            queryItems.append(contentsOf: params.map { URLQueryItem(name: $0.key, value: $0.value) })
-        }
+        let (data, response) = try await urlSession.data(from: url)
         
-        if let page = page {
-            queryItems.append(URLQueryItem(name: "page", value: String(page)))
-        }
-
-        urlComponents.queryItems = queryItems
-
-        guard let finalURL = urlComponents.url else {
-            throw MovieError.invalidEndpoint
-        }
-
-        let (data, response) = try await URLSession.shared.data(from: finalURL)
-
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
             throw MovieError.invalidResponse
         }
-
+        
         do {
-            jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
-            return try jsonDecoder.decode(D.self, from: data)
+            return try jsonDecoder.decode(T.self, from: data)
         } catch {
             throw MovieError.serializationError
         }

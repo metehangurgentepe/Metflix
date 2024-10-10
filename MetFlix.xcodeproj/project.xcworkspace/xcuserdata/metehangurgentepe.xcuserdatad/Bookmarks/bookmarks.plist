@@ -59,13 +59,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>77</string>
+					<string>97</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>76</string>
+					<string>97</string>
 					<key>Timestamp</key>
-					<string>750061463.158815</string>
+					<string>750249500.269182</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -81,17 +81,13 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>        guard let url = URL(string: "\(baseAPIURL)/search/movie") else {
-</string>
+				<string></string>
 				<key>leading</key>
-				<string>    
-    func searchMovie(query: String) async throws -&gt; MovieResponse{
+				<string>    }
+}
 </string>
 				<key>trailing</key>
-				<string>            throw MovieError.invalidEndpoint
-        }
-        return try await self.loadURLAndDecode(url: url, params: [
-</string>
+				<string></string>
 			</dict>
 			<key>type</key>
 			<string>bookmark</string>
@@ -102,15 +98,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>0</string>
+					<string>2</string>
 					<key>EndingLineNumber</key>
-					<string>355</string>
+					<string>5</string>
 					<key>StartingColumnNumber</key>
-					<string>0</string>
+					<string>2</string>
 					<key>StartingLineNumber</key>
-					<string>354</string>
+					<string>5</string>
 					<key>Timestamp</key>
-					<string>750237911.005455</string>
+					<string>750246004.013121</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -126,16 +122,15 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>                self.present(destVC, animated: true)
-</string>
+				<string></string>
 				<key>leading</key>
-				<string>                
-                setBlurView()
-</string>
+				<string>//
+//  Created by Metehan Gürgentepe on 24.01.2024.
+//</string>
 				<key>trailing</key>
-				<string>                
-            case .tappedSeeAll(let endpoint):
-                let destVC = SeeAllVC(endpoint: endpoint, type: endpoint.description)
+				<string>
+
+import UIKit
 </string>
 			</dict>
 			<key>title</key>
@@ -149,15 +144,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>0</string>
+					<string>2</string>
 					<key>EndingLineNumber</key>
-					<string>131</string>
+					<string>5</string>
 					<key>StartingColumnNumber</key>
-					<string>0</string>
+					<string>2</string>
 					<key>StartingLineNumber</key>
-					<string>130</string>
+					<string>5</string>
 					<key>Timestamp</key>
-					<string>750237911.0054719</string>
+					<string>750246004.013141</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -173,65 +168,17 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>        tableView.contentInset = UIEdgeInsets(top: topContentInset + statusBarHeight, left: 0, bottom: 0, right: 0)
-</string>
+				<string></string>
 				<key>leading</key>
-				<string>        view.addSubview(tableView)
-        
-</string>
+				<string>//
+//  Created by Metehan Gürgentepe on 24.01.2024.
+//</string>
 				<key>trailing</key>
-				<string>        
-        tableView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+				<string>
+
+import UIKit
 </string>
 			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-					<string>309</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>308</string>
-					<key>Timestamp</key>
-					<string>750185398.490527</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>MetFlix/Features/MovieDetail/MovieDetailVC.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>        listButton.verticalImage = UIImage(systemName: "plus")
-</string>
-				<key>leading</key>
-				<string>    
-    func configureHorizontalButtonStackView() {
-</string>
-				<key>trailing</key>
-				<string>        listButton.verticalTitle = "My List"
-        listButton.addTarget(self, action: #selector(listButtonTapped), for: .touchUpInside)
-        
-</string>
-			</dict>
-			<key>title</key>
-			<string>Cannot convert value of type 'Int?' to expected argument type 'Int'</string>
 			<key>type</key>
 			<string>bookmark</string>
 		</dict>
