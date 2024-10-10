@@ -111,6 +111,7 @@ class SuggestedSearchViewController: UIViewController, UITextFieldDelegate {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
         tabBarController?.tabBar.isHidden = false
     }
     
@@ -241,7 +242,13 @@ extension SuggestedSearchViewController: SearchViewModelDelegate {
                     self.tableView.isHidden = false
                 }
                 
-            case .selectMovie, .error:
+            case .selectMovie(let id):
+                let destVC = MovieDetailVC(id: id)
+                destVC.modalPresentationStyle = .automatic
+                destVC.scrollView.backgroundColor = .black
+                present(destVC, animated: true)
+                
+            case .error:
                 break
             }
         }
@@ -331,6 +338,9 @@ extension SuggestedSearchViewController: UITableViewDelegate, UITableViewDataSou
 
 extension SuggestedSearchViewController: HomeVCCarouselDelegate {
     func didSelectMovie(movieId: Int) {
-        // Implement movie selection logic
+        let destVC = MovieDetailVC(id: movieId)
+        destVC.modalPresentationStyle = .overFullScreen
+        destVC.scrollView.backgroundColor = .black
+        present(destVC, animated: true)
     }
 }
