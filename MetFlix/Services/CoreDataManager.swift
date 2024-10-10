@@ -104,6 +104,17 @@ class CoreDataManager {
         }
     }
     
+    func fetchMyList(userId: String) -> [MyList]{
+        let request: NSFetchRequest<MyList> = MyList.fetchRequest()
+        request.predicate = NSPredicate(format: "userId == %@", userId as CVarArg)
+        
+        do {
+            return try context.fetch(request)
+        } catch {
+            return []
+        }
+    }
+    
     
     // MARK: - LikedMovie Operations
     
@@ -142,6 +153,17 @@ class CoreDataManager {
             saveContext()
         } catch {
             throw MovieError.invalidResponse
+        }
+    }
+    
+    func fetchLikedMovies(userId: String) -> [LikedMovie]{
+        let request: NSFetchRequest<LikedMovie> = LikedMovie.fetchRequest()
+        request.predicate = NSPredicate(format: "userId == %@", userId as CVarArg)
+        
+        do {
+            return try context.fetch(request)
+        } catch {
+            return []
         }
     }
     

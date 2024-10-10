@@ -10,23 +10,57 @@ import Foundation
 class ProfileViewModel: ProfileViewModelProtocol {
     
     weak var delegate: ProfileViewModelDelegate?
+    let currentUserId = UserSession.shared.userId
     
     @MainActor
-    func load() async{
+    func loadData() async {
         delegate?.handleOutput(.setLoading(true))
         
-        do {
-            let popularList = try await MovieStore.shared.fetchMovies(from: .popular)
-            self.delegate?.handleOutput(.likedMovies(popularList))
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask {
+                await self.loadLikedMovies()
+            }
             
-            let upcomingList = try await MovieStore.shared.fetchMovies(from: .upcoming)
-            self.delegate?.handleOutput(.myList(upcomingList))
-            
-            self.delegate?.handleOutput(.setLoading(false))
-        } catch {
-            self.delegate?.handleOutput(.error(error as! MovieError))
-            self.delegate?.handleOutput(.setLoading(false))
+            group.addTask {
+                await self.loadMyList()
+            }
         }
+        
+        delegate?.handleOutput(.setLoading(false))
+    }
+
+    @MainActor
+    func loadLikedMovies() async {
+        let likedList = CoreDataManager.shared.fetchLikedMovies(userId: currentUserId ?? "")
+        var movies: [Movie] = []
+        
+        for myListItem in likedList {
+            do {
+                let movieDetail = try await MovieStore.shared.fetchMovieDetail(id: Int(myListItem.movieId))
+                movies.append(movieDetail)
+            } catch {
+                self.delegate?.handleOutput(.error(error as! MovieError))
+            }
+        }
+        
+        self.delegate?.handleOutput(.likedMovies(movies))
+    }
+
+    @MainActor
+    func loadMyList() async {
+        let likedList = CoreDataManager.shared.fetchMyList(userId: currentUserId ?? "")
+        var movies: [Movie] = []
+        
+        for myListItem in likedList {
+            do {
+                let movieDetail = try await MovieStore.shared.fetchMovieDetail(id: Int(myListItem.movieId))
+                movies.append(movieDetail)
+            } catch {
+                self.delegate?.handleOutput(.error(error as! MovieError))
+            }
+        }
+        
+        self.delegate?.handleOutput(.myList(movies))
     }
     
     
@@ -36,6 +70,6 @@ class ProfileViewModel: ProfileViewModelProtocol {
     
     
     func tappedSeeAll(endpoint: MovieListEndpoint) {
-//        delegate?.handleOutput(.tappedSeeAll(endpoint))
+        //        delegate?.handleOutput(.tappedSeeAll(endpoint))
     }
 }

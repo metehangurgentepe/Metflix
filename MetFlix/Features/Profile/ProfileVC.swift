@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ProfileVC: UIViewController, HomeVCCarouselDelegate {
+class ProfileVC: DataLoadingVC, HomeVCCarouselDelegate {
     let tableView = UITableView(frame: .zero, style: .grouped)
     let titleLabel: UILabel = {
         let label = UILabel()
@@ -46,6 +46,10 @@ class ProfileVC: UIViewController, HomeVCCarouselDelegate {
         image.layer.cornerRadius = 10
         image.clipsToBounds = true
         image.contentMode = .scaleAspectFit
+        
+        image.snp.makeConstraints { make in
+            make.height.width.equalTo(60)
+        }
         
         view.addArrangedSubview(image)
         view.addArrangedSubview(label)
@@ -113,7 +117,25 @@ class ProfileVC: UIViewController, HomeVCCarouselDelegate {
         configureTableView()
         
         viewModel.delegate = self
-        Task{ await viewModel.load() }
+        
+        Task{
+            await viewModel.loadData()
+        }
+    }
+    
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        Task{
+            await viewModel.loadData()
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+//        Task{
+//            await viewModel.loadData()
+//        }
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -122,7 +144,7 @@ class ProfileVC: UIViewController, HomeVCCarouselDelegate {
         if offset > 15 {
             titleStackView.alpha = offset * 0.01
             navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleStackView)
-        }else {
+        } else {
             navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
         }
     }
@@ -169,7 +191,7 @@ class ProfileVC: UIViewController, HomeVCCarouselDelegate {
     }
     
     private func headerTableView() {
-        headerView.frame = CGRect(x: 0, y: 0, width: ScreenSize.width * 0.5, height: 100)
+        headerView.frame = CGRect(x: 0, y: 0, width: ScreenSize.width * 0.9, height: 100)
         tableView.tableHeaderView = headerView
     }
 }
@@ -230,7 +252,7 @@ extension ProfileVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func didSelectMovie(movieId: Int) {
-        
+        viewModel.selectMovie(id: movieId)
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -256,19 +278,31 @@ extension ProfileVC: ProfileViewModelDelegate {
             guard let self else { return }
             switch output {
             case .likedMovies(let movieResponse):
-                self.likedMovies = movieResponse.results
+                self.likedMovies = movieResponse
                 self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
                 
             case .myList(let movieResponse):
-                self.myList = movieResponse.results
+                self.myList = movieResponse
                 self.tableView.reloadSections(IndexSet(integer: 2), with: .automatic)
                 
             case .error(let movieError):
-                break
+                self.presentAlertOnMainThread(title: "Error", message: movieError.localizedDescription, buttonTitle: "Ok")
+                
             case .setLoading(let bool):
-                break
-            case .selectMovie(let int):
-                break
+                switch bool {
+                case true:
+                    self.showLoadingView()
+                    
+                case false:
+                    self.dismissLoadingView()
+                }
+                
+            case .selectMovie(let id):
+                let destVC = MovieDetailVC(id: id)
+                destVC.modalPresentationStyle = .automatic
+                destVC.scrollView.backgroundColor = .black
+                
+                self.present(destVC, animated: true)
             }
         }
     }
