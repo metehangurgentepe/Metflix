@@ -352,6 +352,7 @@
 				664F3CCE2B6118DD009C5E3B /* MetFlixTests */,
 				664F3CD82B6118DD009C5E3B /* MetFlixUITests */,
 				664F3CB62B6118DC009C5E3B /* Products */,
+				665CA9282CB92C340078A8C5 /* Screenshot */,
 			);
 			sourceTree = "<group>";
 		};
@@ -368,7 +369,6 @@
 		664F3CB72B6118DC009C5E3B /* MetFlix */ = {
 			isa = PBXGroup;
 			children = (
-				665CA9282CB92C340078A8C5 /* Screenshot */,
 				66249E372CB66E2E005A4A1A /* Theme */,
 				66EB5D792B65553E001ADD72 /* Services */,
 				664F3CEC2B611969009C5E3B /* Model */,
