@@ -134,7 +134,7 @@ class MovieDetailVC: DataLoadingVC {
     // MARK: - UI Configuration
     private func configureViewController() {
         tabBarController?.tabBar.isHidden = true
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .clear
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true
         
@@ -186,7 +186,7 @@ class MovieDetailVC: DataLoadingVC {
         
         scrollView.snp.makeConstraints { make in
             make.top.equalTo(imageView.snp.bottom)
-            make.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.leading.trailing.bottom.equalToSuperview()
         }
     }
     
@@ -424,7 +424,7 @@ class MovieDetailVC: DataLoadingVC {
         popoverView.snp.makeConstraints { make in
             make.centerX.equalTo(givePointButton.snp.centerX)
             make.bottom.equalTo(givePointButton.snp.top).offset(-10)
-            make.width.equalTo(200)
+            make.width.equalTo(280)
             make.height.equalTo(100)
         }
         
@@ -439,11 +439,11 @@ class MovieDetailVC: DataLoadingVC {
         let isDisliked = viewModel.checkIsDisliked(userId: userId, movieId: movieId)
         
         dislikeButton.verticalImage = isDisliked ? UIImage(systemName: "hand.thumbsdown.fill") : UIImage(systemName: "hand.thumbsdown")
-        dislikeButton.verticalTitle = "Bunu sevmedim"
+        dislikeButton.verticalTitle = "I don't like this movie."
         dislikeButton.addTarget(self, action: #selector(dislikeMovie), for: .touchUpInside)
         
         likeButton.verticalImage = isLiked ? UIImage(systemName: "hand.thumbsup.fill") : UIImage(systemName: "hand.thumbsup")
-        likeButton.verticalTitle = "Buna bayıldım"
+        likeButton.verticalTitle = "I liked this movie."
         likeButton.addTarget(self, action: #selector(likeMovie), for: .touchUpInside)
     }
     

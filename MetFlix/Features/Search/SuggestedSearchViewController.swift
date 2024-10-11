@@ -23,9 +23,9 @@ class SuggestedSearchViewController: UIViewController, UITextFieldDelegate {
         var title: String {
             switch self {
             case .mobileGames:
-                return "Önerilen Mobil Oyunlar"
+                return "Recommended Mobile Games"
             case .moviesAndSeries:
-                return "Önerilen Dizi ve Filmler"
+                return "Recommended Movies and Series"
             }
         }
     }
@@ -55,7 +55,7 @@ class SuggestedSearchViewController: UIViewController, UITextFieldDelegate {
         sb.delegate = self
         sb.searchTextField.delegate = self
         sb.searchTextField.attributedPlaceholder = NSAttributedString(
-            string: "Oyun, dizi veya film arayın.",
+            string: "Search for games, series, or movies.",
             attributes: [
                 .foregroundColor: UIColor.lightGray,
                 .font: UIFont.systemFont(ofSize: 12, weight: .light)
@@ -319,8 +319,8 @@ extension SuggestedSearchViewController: UITableViewDelegate, UITableViewDataSou
         }
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return TableViewSection(rawValue: section)?.title
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return Header(title: TableViewSection.allCases[section].title, action: nil)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

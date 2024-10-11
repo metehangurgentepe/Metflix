@@ -192,9 +192,27 @@
 		66FEAAB92B8699D100446215 /* SearchViewModelContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModelContracts.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		665CA9312CB92C480078A8C5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Simulator Screenshot - iPhone 16 Pro - 2024-10-11 at 12.46.53.png",
+				"Simulator Screenshot - iPhone 16 Pro - 2024-10-11 at 12.46.57.png",
+				"Simulator Screenshot - iPhone 16 Pro - 2024-10-11 at 12.47.02.png",
+				"Simulator Screenshot - iPhone 16 Pro - 2024-10-11 at 12.47.06.png",
+				"Simulator Screenshot - iPhone 16 Pro - 2024-10-11 at 12.47.18.png",
+				"Simulator Screenshot - iPhone 16 Pro - 2024-10-11 at 12.47.39.png",
+				"Simulator Screenshot - iPhone 16 Pro - 2024-10-11 at 12.47.47.png",
+				"Simulator Screenshot - iPhone 16 Pro - 2024-10-11 at 12.49.14.png",
+			);
+			target = 664F3CB42B6118DC009C5E3B /* MetFlix */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		6647FCF52CAD8B440006DF58 /* NewAndPopular */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = NewAndPopular; sourceTree = "<group>"; };
 		6647FDD12CAEA1C30006DF58 /* CategoryController */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = CategoryController; sourceTree = "<group>"; };
+		665CA9282CB92C340078A8C5 /* Screenshot */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (665CA9312CB92C480078A8C5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Screenshot; sourceTree = "<group>"; };
 		667875C02CB5A373003EBB5B /* SelectProfile */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SelectProfile; sourceTree = "<group>"; };
 		66A69DDE2CB5473E00C2D7C7 /* Splash */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Splash; sourceTree = "<group>"; };
 		66A69DED2CB55ECD00C2D7C7 /* Profile */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Profile; sourceTree = "<group>"; };
@@ -350,6 +368,7 @@
 		664F3CB72B6118DC009C5E3B /* MetFlix */ = {
 			isa = PBXGroup;
 			children = (
+				665CA9282CB92C340078A8C5 /* Screenshot */,
 				66249E372CB66E2E005A4A1A /* Theme */,
 				66EB5D792B65553E001ADD72 /* Services */,
 				664F3CEC2B611969009C5E3B /* Model */,
@@ -555,6 +574,7 @@
 			fileSystemSynchronizedGroups = (
 				6647FCF52CAD8B440006DF58 /* NewAndPopular */,
 				6647FDD12CAEA1C30006DF58 /* CategoryController */,
+				665CA9282CB92C340078A8C5 /* Screenshot */,
 				667875C02CB5A373003EBB5B /* SelectProfile */,
 				66A69DDE2CB5473E00C2D7C7 /* Splash */,
 				66A69DED2CB55ECD00C2D7C7 /* Profile */,

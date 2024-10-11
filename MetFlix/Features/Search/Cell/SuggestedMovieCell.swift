@@ -52,7 +52,7 @@ class SuggestedMovieCell: UITableViewCell {
         contentView.addSubview(playButton)
         
         image.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
+            make.leading.equalToSuperview().offset(10)
             make.top.equalToSuperview().offset(6)
             make.bottom.equalToSuperview().inset(6)
             make.width.equalTo(150)

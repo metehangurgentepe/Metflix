@@ -42,23 +42,20 @@ class ProfileVC: DataLoadingVC {
     }()
     
     private lazy var headerView: UIView = {
-        let view = UIStackView()
-        view.axis = .vertical
-        view.spacing = 1
-        view.alignment = .center
-        view.distribution = .fillEqually
+        let user = UserProfileManager.shared.selectedProfile
+        
+        let containerView = UIView()
         
         let image = UIImageView()
-        image.image = self.navigationController?.tabBarItem.image
+        image.image = UIImage(named: user?.imageName ?? "")
         image.layer.cornerRadius = 10
         image.clipsToBounds = true
         image.contentMode = .scaleAspectFit
-        image.snp.makeConstraints { $0.height.width.equalTo(60) }
         
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 20, weight: .heavy)
-        let text = NSAttributedString(string: "Metehan ", attributes: [
+        let text = NSAttributedString(string: user?.username ?? "", attributes: [
             .font: UIFont.systemFont(ofSize: 20, weight: .heavy),
             .foregroundColor: UIColor.white
         ])
@@ -70,22 +67,36 @@ class ProfileVC: DataLoadingVC {
         completeString.append(attachmentString)
         label.attributedText = completeString
         
-        view.addArrangedSubview(image)
-        view.addArrangedSubview(label)
+        containerView.addSubview(image)
+        containerView.addSubview(label)
         
-        return view
+        image.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.centerX.equalToSuperview()
+            make.width.height.equalTo(160)
+        }
+        
+        label.snp.makeConstraints { make in
+            make.top.equalTo(image.snp.bottom)
+            make.centerX.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+        
+        return containerView
     }()
     
     private lazy var titleStackView: UIStackView = {
+        let user = UserProfileManager.shared.selectedProfile
+        
         let image = UIImageView()
         image.image = self.navigationController?.tabBarItem.image
         image.layer.cornerRadius = 4
         image.clipsToBounds = true
-        image.contentMode = .scaleAspectFit
+        image.contentMode = .scaleAspectFill
         image.snp.makeConstraints { $0.width.height.equalTo(30) }
         
         let label = UILabel()
-        label.text = "Metehan"
+        label.text = user?.username
         label.textColor = .white
         label.font = .systemFont(ofSize: 20, weight: .heavy)
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
@@ -158,7 +169,7 @@ class ProfileVC: DataLoadingVC {
         view.addSubview(tableView)
         tableView.snp.makeConstraints { $0.edges.equalToSuperview() }
         
-        headerView.frame = CGRect(x: 0, y: 0, width: ScreenSize.width * 0.9, height: 100)
+        headerView.frame = CGRect(x: 0, y: 0, width: ScreenSize.width * 0.9, height: 200)
         tableView.tableHeaderView = headerView
     }
     

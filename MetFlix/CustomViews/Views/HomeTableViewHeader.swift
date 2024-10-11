@@ -34,7 +34,7 @@ class HomeTableViewHeader: UIView {
     let playButton : UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "play.fill"), for: .normal)
-        button.setTitle("Oynat", for: .normal)
+        button.setTitle("Play", for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.layer.cornerRadius = 4
         button.backgroundColor = .white
@@ -44,10 +44,11 @@ class HomeTableViewHeader: UIView {
     
     let moreInfoButton : UIButton = {
         let button = UIButton()
-        button.setTitle("Daha Fazla Bilgi", for: .normal)
+        button.setTitle("More Information", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .gray
         button.layer.cornerRadius = 4
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
         return button
     }()
     

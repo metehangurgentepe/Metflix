@@ -235,7 +235,6 @@ extension HomeViewController: HomeTitleViewDelegate {
 
 // MARK: - SelectCategoryDelegate
 extension HomeViewController: SelectCategoryDelegate {
-    // Implement SelectCategoryDelegate methods
     private func setBlurView() {
         let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
         blurView.frame = view.frame

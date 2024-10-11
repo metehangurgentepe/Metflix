@@ -5,6 +5,14 @@
 //  Created by Metehan Gürgentepe on 8.10.2024.
 //
 
+class UserProfileManager {
+    static let shared = UserProfileManager()
+    
+    var selectedProfile: (username: String, imageName: String)?
+    
+    private init() {}
+}
+
 import UIKit
 
 class SelectProfileVC: UIViewController {
@@ -103,8 +111,9 @@ extension SelectProfileVC: UICollectionViewDelegate, UICollectionViewDataSource,
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedUser = profiles[indexPath.row]
-        UserSession.shared.userId = selectedUser.userID?.uuidString
-        
+        UserSession.shared.userId = selectedUser.userId?.uuidString
+        UserProfileManager.shared.selectedProfile = (selectedUser.username!, selectedUser.imageName!)
+
         selectedProfile = (selectedUser.username, selectedUser.imageName) as! (String, String)
         
         goToMainTabBar()

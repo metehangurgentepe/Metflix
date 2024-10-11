@@ -22,8 +22,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func addInitialUsers() {
-        let user1 = CoreDataManager.shared.addUser(username: "John", imageName: "avatar1")
-        let user2 = CoreDataManager.shared.addUser(username: "Jane", imageName: "avatar2")
+        _ = CoreDataManager.shared.addUser(username: "John", imageName: "avatar1")
+        _ = CoreDataManager.shared.addUser(username: "Jane", imageName: "avatar2")
     }
     
     // MARK: UISceneSession Lifecycle

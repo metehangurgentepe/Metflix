@@ -289,10 +289,10 @@ extension NewAndPopularVC {
         
         var title: String {
             switch self {
-            case .soon: return "Çok Yakında"
-            case .everyoneWatches: return "Herkes Bunları İzliyor"
-            case .top10Series: return "Top 10 Dizi Listesi"
-            case .top10Movies: return "Top 10 Film Listesi"
+            case .soon: return "Coming Soon"
+            case .everyoneWatches: return "Trending Now"
+            case .top10Series: return "Top 10 Series List"
+            case .top10Movies: return "Top 10 Movies List"
             }
         }
         

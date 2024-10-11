@@ -60,7 +60,7 @@ class CoreDataManager: CoreDataManagerProtocol {
     
     func addUser(username: String, imageName: String) -> User? {
         let user = User(context: context)
-        user.userID = UUID()
+        user.userId = UUID()
         user.username = username
         user.dateAdded = Date()
         user.imageName = imageName
@@ -74,6 +74,18 @@ class CoreDataManager: CoreDataManagerProtocol {
         request.predicate = NSPredicate(format: "userId == %@", userId as CVarArg)
         
         return (try? context.fetch(request)) ?? []
+    }
+    
+    func fetchUser(for userId: String) -> User? {
+        let request: NSFetchRequest<User> = User.fetchRequest()
+        request.predicate = NSPredicate(format: "userId == %@", userId as CVarArg)
+        
+        do {
+            let results = try context.fetch(request)
+            return results.first
+        } catch {
+            return nil
+        }
     }
     
     // MARK: - MyList Operations
