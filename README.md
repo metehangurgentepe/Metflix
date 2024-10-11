@@ -82,7 +82,7 @@ GET /api/movie/{id}/videos?language=en-US
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/Metflix.git
+   git clone https://github.com/metehangurgentepe/Metflix.git
    ```
 2. Open the project in Xcode
 3. Build and run the project on your simulator or device
